@@ -44,6 +44,9 @@ In the spirit of:
 > Lemma's learning run will rewrite this once traces arrive):
 > - It takes a cart and drives it to a completed order; a run ends at
 >   confirmation or a decline. (`src/checkout-agent.ts`)
+> - It calls `price_cart` then `charge_card`; after a decline it calls
+>   `price_cart` once more and returns the decline reason.
+>   (`src/checkout-agent.ts`)
 > - `price_cart` takes a cart id and returns the total; `charge_card` takes
 >   the total and returns an order id or a decline reason. (`src/tools.ts`)
 >
@@ -52,8 +55,8 @@ In the spirit of:
 > - `spend-cap.md`: the agent stops a session once spend reaches $500 rather
 >   than continuing. (`src/checkout-agent.ts`)
 > - `expected-declines.md`: a declined card is an expected outcome, not a
->   failure, and the agent reprices once after a decline, so a second pricing
->   call is intended, not a retry loop. (`src/checkout-agent.ts`)
+>   failure, and the second `price_cart` call after a decline is intended,
+>   not a retry loop. (`src/checkout-agent.ts`)
 >
 > All of this comes from the code; I haven't seen any traces. Should I
 > record it?
@@ -75,7 +78,10 @@ Only after an explicit yes, and only the content you showed.
 **Agent understanding** — `write_learn_agent_artifact_version` with the agent
 name and `expected_latest_version` set to the latest version you read, or
 `null` if it had none. Build the document to
-[agent-artifact-contract.md](agent-artifact-contract.md).
+[agent-artifact-contract.md](agent-artifact-contract.md) as the source-only
+profile below adjusts it. **Where the profile and the contract disagree, the
+profile wins.** The contract is written for a writer that has traces, and it is
+copied verbatim from Lemma, so it is never edited to fit this skill.
 
 ### The source-only profile
 
@@ -90,9 +96,9 @@ section to fill a gap.
 | Agent purpose and the task | Write it. Code states intent well. |
 | Shape of a normal trace | **Omit the section entirely.** You have not seen a trace, and inferring a span sequence from control flow is how a document starts asserting things that are not true. |
 | Tool catalog — one entry per tool | **Exhaustive and terse.** One `###` entry for every tool the agent can call, a sentence or two each: what it does and what it takes. The learning run cuts it down to the tools it sees in use. |
-| Tool arguments, sequencing, idioms | Write them where the code shows them. |
+| Tool arguments, sequencing, idioms | Write the order and arguments the code shows — a trace would show them too. *Why* a sequence that looks like a failure is intended goes in a context file (next row). |
 | Tool latency bands, call counts per run, result sizes | **Leave out.** These are runtime facts. A guess here calibrates the auditor against a number nobody measured. |
-| By-design quirks, harness facts, anything no trace shows | **Not here — put them in context files.** The contract invites a section on intended behaviour that resembles a failure; from source, those are exactly the facts the learning run will not keep. |
+| By-design quirks, harness facts, anything no trace shows | **Not here — put them in context files**, by the test in [project-context-contract.md](project-context-contract.md). The contract invites a section on intended behaviour that resembles a failure; from source, those are exactly the facts the learning run will not keep. |
 | One Mermaid architecture diagram | **Required — you cannot skip it.** The API rejects a first version without one. Draw the architecture the code describes; do not draw a trace you have not seen. |
 | Inline confidence qualifiers | **Leave out.** Do not mark claims as coming from source or attach confidence to them. The learning run replaces this document from traces, so a qualifier tells it nothing. |
 

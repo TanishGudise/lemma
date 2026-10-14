@@ -82,12 +82,11 @@ keep little of yours. That is expected: write it in the same shape and register
 the learning run uses, so the hand-off is clean, and do not try to make it
 survive.
 
-The test for which one a finding belongs in: **could someone learn this from
-the agent's traces, including the system prompt they carry?** If not, it goes
-in a project context file — a spend cap enforced in code, a behaviour that is
-intended even though it looks like a failure, which environments send traces,
-what an internal code means. If a trace would show it — what the agent is for,
-what each tool does and takes — it goes in the understanding.
+Which one a finding belongs in is decided by one test, set out with examples
+in [references/project-context-contract.md](references/project-context-contract.md):
+**could someone learn this from the agent's traces, including the system prompt
+they carry?** If not, it goes in a project context file. If so, it goes in the
+understanding.
 
 Anything worth keeping that you put in the understanding instead will be gone
 after the first learning run.
