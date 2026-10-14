@@ -11,7 +11,7 @@ description: >-
   use for installing tracing or fixing trace delivery and shape — that is
   lemma-tracing and lemma-diagnostics.
 metadata:
-  version: 1.2.0
+  version: 2.0.0
 ---
 
 # Lemma Artifacts
@@ -27,8 +27,8 @@ customer already has: their own code.
 Two things follow from where you are standing, and they govern everything below.
 
 **The code tells you intent, not behaviour.** You are reading what the authors
-meant to build. Only traces show what actually happens. Never state a
-code-derived claim as an observation.
+meant to build. Only traces show what actually happens, so leave out anything
+only a run could tell you: the shape of a trace, latencies, call counts.
 
 **Nothing is written without the user saying yes to specifics.** You are about
 to put words in their vendor's mouth about their own system. They get to read
@@ -69,20 +69,28 @@ behave differently and picking wrong loses information.
 
 | | Agent understanding | Project context files |
 | --- | --- | --- |
-| Holds | how the agent works | rules it must obey, facts no trace shows |
-| Written by | Lemma's learning runs, and you | the customer, and you |
-| Rewritten by Lemma | yes, from observed traces | never |
+| Holds | how the agent works: its task and its tools | facts no trace shows: rules, intended behaviour that looks like a failure, setup facts |
+| Written by | Lemma's learning runs; you write the first version | the customer, and you |
+| Rewritten by Lemma | on every learning run, from observed traces | never |
 | Tools | `write_learn_agent_artifact_version` | `upload_project_artifact`, `update_project_artifact`, `delete_project_artifact` |
 | Contract | [references/agent-artifact-contract.md](references/agent-artifact-contract.md) | [references/project-context-contract.md](references/project-context-contract.md) |
 
-The test for which one a finding belongs in: **would a run that disagreed with
-this statement be worth reporting?** If yes it is a rule — a spend cap, a
-mandatory escalation, a never-do — and it goes in a project context file, where
-Lemma will not quietly revise it to match what the traces show. If no it is a
-description, and it goes in the agent understanding document.
+**The understanding you write is a first draft for Lemma's learning run, not
+lasting context.** Once traces arrive, the run reads your version as its
+previous draft and rewrites the whole document from what it observes. It may
+keep little of yours. That is expected: write it in the same shape and register
+the learning run uses, so the hand-off is clean, and do not try to make it
+survive.
 
-Put a rule in the wrong place and a later learning run can normalise it away
-against the very traces that violate it.
+The test for which one a finding belongs in: **could someone learn this from
+the agent's traces, including the system prompt they carry?** If not, it goes
+in a project context file — a spend cap enforced in code, a behaviour that is
+intended even though it looks like a failure, which environments send traces,
+what an internal code means. If a trace would show it — what the agent is for,
+what each tool does and takes — it goes in the understanding.
+
+Anything worth keeping that you put in the understanding instead will be gone
+after the first learning run.
 
 ## Workflows
 

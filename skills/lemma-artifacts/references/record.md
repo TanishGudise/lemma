@@ -40,20 +40,23 @@ In the spirit of:
 > agent — it's the only one wired into a route (`src/server.ts`), and the two
 > others are an example and a test fixture.
 >
-> I'd record, as its **understanding** (first version, nothing recorded yet):
+> I'd record, as its **understanding** (first version, nothing recorded yet —
+> Lemma's learning run will rewrite this once traces arrive):
 > - It takes a cart and drives it to a completed order; a run ends at
->   confirmation or abandonment. (`src/checkout-agent.ts`)
-> - It calls `price_cart` then `charge_card`, and reprices once after a
->   decline — so a second pricing call is intended, not a retry loop.
->   (`src/checkout-agent.ts`)
+>   confirmation or a decline. (`src/checkout-agent.ts`)
+> - `price_cart` takes a cart id and returns the total; `charge_card` takes
+>   the total and returns an order id or a decline reason. (`src/tools.ts`)
 >
-> And as a **rule** in `spend-cap.md`, because a run that broke it would be
-> worth reporting:
-> - The agent stops a session once spend reaches $500 rather than continuing.
->   (`src/checkout-agent.ts`)
+> And as **context files**, because no trace would show them and the
+> learning run would not keep them:
+> - `spend-cap.md`: the agent stops a session once spend reaches $500 rather
+>   than continuing. (`src/checkout-agent.ts`)
+> - `expected-declines.md`: a declined card is an expected outcome, not a
+>   failure, and the agent reprices once after a decline, so a second pricing
+>   call is intended, not a retry loop. (`src/checkout-agent.ts`)
 >
-> All of this is what the code intends. I haven't seen any traces, so I can't
-> tell you it's what actually happens. Should I record it?
+> All of this comes from the code; I haven't seen any traces. Should I
+> record it?
 
 Then stop and wait. Do not write on an implied yes, a "sounds good" about
 something else, or your own confidence.
@@ -76,20 +79,22 @@ name and `expected_latest_version` set to the latest version you read, or
 
 ### The source-only profile
 
-The contract is written for a writer that has studied production traces. You
-have not. It already allows omitting a section and skipping dimensions the
-evidence does not support, so apply it like this and do not invent a section
-to fill a gap.
+The contract is written for Lemma's learning run, which studies production
+traces. Your document is that run's first draft: the run will read it as the
+previous version and rewrite it. Follow the contract in the same shape and
+register so the hand-off is clean, apply it like this, and do not invent a
+section to fill a gap.
 
 | Contract asks for | From source code |
 | --- | --- |
 | Agent purpose and the task | Write it. Code states intent well. |
 | Shape of a normal trace | **Omit the section entirely.** You have not seen a trace, and inferring a span sequence from control flow is how a document starts asserting things that are not true. |
-| Tool catalog — one entry per tool | Write it. This is the highest-value part and it is legible from source. |
-| Tool arguments, sequencing, idioms | Write them, marked as intent. |
+| Tool catalog — one entry per tool | **Exhaustive and terse.** One `###` entry for every tool the agent can call, a sentence or two each: what it does and what it takes. The learning run cuts it down to the tools it sees in use. |
+| Tool arguments, sequencing, idioms | Write them where the code shows them. |
 | Tool latency bands, call counts per run, result sizes | **Leave out.** These are runtime facts. A guess here calibrates the auditor against a number nobody measured. |
-| One Mermaid architecture diagram | **Required — you cannot skip it.** The API rejects a first version without one. Draw the architecture the code describes and say so; do not draw a trace you have not seen. |
-| Inline confidence qualifiers | Mark every code-derived claim, e.g. `(intended — from source, not observed)`. This is what lets Lemma and the next reader tell intent from observation, and it is why a later learning run can upgrade the claim instead of contradicting it. |
+| By-design quirks, harness facts, anything no trace shows | **Not here — put them in context files.** The contract invites a section on intended behaviour that resembles a failure; from source, those are exactly the facts the learning run will not keep. |
+| One Mermaid architecture diagram | **Required — you cannot skip it.** The API rejects a first version without one. Draw the architecture the code describes; do not draw a trace you have not seen. |
+| Inline confidence qualifiers | **Leave out.** Do not mark claims as coming from source or attach confidence to them. The learning run replaces this document from traces, so a qualifier tells it nothing. |
 
 **Tool names have the same binding problem as the agent name.** The contract
 says to use the name as it appears in spans, and before instrumentation runs
@@ -102,7 +107,8 @@ from, so a mismatch is visible rather than silent. See
 **Project context files** — `upload_project_artifact` with a filename that
 says what it holds. Build each file to
 [project-context-contract.md](project-context-contract.md): one subject per
-file, one rule per line.
+file, one statement per line. Expect several: rules, intended behaviour that
+looks like a failure, and setup facts each get their own file.
 
 **Changing what is already there** — `update_project_artifact` with the
 `expected_content_sha256` you read, or `delete_project_artifact` when a rule

@@ -28,7 +28,7 @@ Writing principles:
 - Never write ASCII diagrams (box-drawing, text flowcharts, or monospace layout diagrams) inside the knowledge body.
 - You may include Mermaid diagrams inside the knowledge body when helpful.
 - You must produce one overarching Mermaid architecture/flow diagram for the agent as a separate diagram. It must be valid mermaid that compiles cleanly.
-- **Inline confidence and recency where it matters.** When you state a pattern, claim, or carve-out, append a short qualifier in the same line/bullet when it isn't high-confidence — e.g., `(high confidence — seen across multiple traces)`, `(low confidence — single trace)`, `(based on traces from <approximate window>)`. When a claim rests on source code rather than observed runs, say so in the same shape — e.g., `(intended — from source, not observed)` — because the auditor otherwise reads every claim as describing what actually happens. Do **not** create a standalone "Confidence and currency" section; weave these qualifiers into the relevant sentences instead.
+- **Inline confidence and recency where it matters.** When you state a pattern, claim, or carve-out, append a short qualifier in the same line/bullet when it isn't high-confidence — e.g., `(high confidence — seen across multiple traces)`, `(low confidence — single trace)`, `(based on traces from <approximate window>)`. Do **not** create a standalone "Confidence and currency" section; weave these qualifiers into the relevant sentences instead.
 
 What the document must cover:
 

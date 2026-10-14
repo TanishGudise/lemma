@@ -1,11 +1,9 @@
-A project text artifact is the customer's own account of their system: the rules their agent is required to obey and the facts about their setup that no trace reveals. It is not a description of how the agent behaves — that belongs in the agent knowledge document, which is rebuilt from observed runs. This one is not rebuilt from anything. It stands until someone changes it deliberately.
+A project text artifact is the customer's own account of their system: the facts about it that no trace shows. That covers the rules their agent is required to obey, the behaviour that is intended even though it looks like a failure, and the facts about their setup that the agent never sees. It is not a description of how the agent behaves — that belongs in the agent knowledge document, which is rebuilt from observed runs and may be rewritten or cut down on every rebuild. This one is not rebuilt from anything. It stands until someone changes it deliberately.
 
-That difference decides what goes here. Ask whether a run that disagreed with the statement would be a problem worth reporting:
+That difference decides what goes here. Ask whether the statement could be learned from the agent's traces, including the system prompt they carry:
 
-- **Yes — it belongs here.** "Refunds above $500 require a human approver." "The agent must never quote a delivery date it did not get from the shipping tool." "Escalation to a human is mandatory once a customer uses the word 'lawyer'." A trace that departs from one of these is a finding, not an update.
-- **No — it belongs in the knowledge document.** "Retrieval usually runs twice per turn." "The summarizer is slow on long threads." These describe what happens, and what happens is what traces are for.
-
-Facts that no trace can carry belong here too, whether or not a run could violate them: which environments send traces, which agent names map to which surface, what an internal code or enum means, which failures are expected and routine in this domain.
+- **No — it belongs here.** "The refund backend rejects any amount above $500; that rejection is the cap working, not a tool failure." "User turns are scripted and do not react to the agent's replies, so a user message that ignores a clarifying question is the test, not the agent's fault." "These traces come from offline benchmark runs, not from production users." Which environments send traces, which agent names map to which surface, what an internal code or enum means, which failures are expected and routine in this domain.
+- **Yes — it belongs in the knowledge document.** "Retrieval usually runs twice per turn." "The agent calls `lookup_order` before `issue_refund`." "`issue_refund` takes an order id and an amount." What a tool is for, what it takes, and what the agent says it should do are all visible in a run, and what a run shows is what traces are for.
 
 ## Writing one
 
