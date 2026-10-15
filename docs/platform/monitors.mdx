@@ -1,9 +1,9 @@
 ---
 title: "Monitors"
-description: "A check you declare for one named agent, with groups in this browser and a daily fit rate"
+description: "A check you declare for one named agent, with a shared project board and a daily fit rate"
 meta:
   contentType: "Conceptual"
-  goal: "Declare a monitor for one agent, group it in this browser, and correct which traces fit"
+  goal: "Declare a monitor for one agent, arrange it on the project board, and correct which traces fit"
   audience: "People checking one behavior on one named agent"
 ---
 
@@ -19,9 +19,9 @@ A **monitor** is a check you declare for one project and one named agent. It jud
 
 Right-click a group to rename it, add monitors, or delete the group. Deleting a group leaves its monitors running. Inside a group, **Add existing** puts monitors you already have into that tab. A monitor you create while that tab is open starts in the group too.
 
-Drag a card to change its order in the open tab.
+Drag a card to change its order in the open tab. That includes **All monitors** and any group tab.
 
-Groups, which monitors they hold, and that card order are saved in this browser for the project. They come back after you reload. They are not stored on the monitor, so another browser does not see them. If this browser blocks storage, they last for this visit only. On a monitor, the side rail lists its groups, or **No group yet**.
+One board per project stores the groups, which monitors they hold, and the card order on every tab. The dashboard saves that board for the project. A reload, or another member of the project, sees the same groups, membership, and order. Deleting a monitor removes it from the groups and from every tab’s order. On a monitor, the side rail lists its groups, or **No group yet**.
 
 ## Signal versus behavior
 
@@ -79,7 +79,7 @@ The **Feedback** tab lists your corrections. The next recalibrate uses correctio
 
 ## From the API
 
-REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the reads. Creating a monitor, changing it, recording feedback, and recalibrating stay on REST. Groups and card order are not on the API. Request shapes are in the [API Reference](/api-reference).
+REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the monitor reads. Creating a monitor, changing it, recording feedback, and recalibrating stay on REST. Request shapes are in the [API Reference](/api-reference). Groups, membership, and the card order on each tab stay in the dashboard. They are not on REST or MCP yet.
 
 ## Related pages
 
