@@ -9,6 +9,38 @@ meta:
   audience: "People using the Lemma dashboard and API"
 ---
 
+<Update label="October 11, 2026" tags={["New releases", "Improvements", "Bug fixes", "[Accounts]", "[Settings]", "[Audit logs]", "[API keys]", "[Billing]", "[Dashboard]"]} rss={{ title: "Sign in with SSO, and open organization settings as pages" }}>
+
+  ## Accounts
+
+  - **SSO:** **Continue with SSO** sends you to your organization’s identity provider when your email domain is verified. The first sign-in adds you to that organization. SSO links an existing account with that email. A Google sign-in on a verified domain joins that organization.
+
+  ## Settings
+
+  - **Organization pages:** Organization settings are pages: **General**, **Members**, **Billing**, **Developer**, **Integrations**, **Organizations**, and **Audit log**.
+  - **Account pages:** **Profile** and **Security** are pages on your account. They follow you from one organization to another.
+  - **Integrations:** Organization **Integrations** lists each project and opens that project’s connections. Slack names the workspace the organization uses.
+  - **Project settings:** Project settings links up to the organization’s settings.
+
+  ## Audit logs
+
+  - **Audit log page:** An owner or admin opens **Audit log** in organization settings. The default window is the last 7 days. You can switch to the last 24 hours, 30 days, or 90 days, then export that window as CSV.
+
+  ## API keys
+
+  - **Developer settings:** API keys live under organization **Developer**. **Set policy** sets the lifetime maximum for new keys. With a maximum set, creating a key uses that lifetime.
+
+  ## Billing
+
+  - **Monthly and annual:** Choosing **Monthly** or **Annually** starts checkout at that price. An open checkout for the other interval is replaced.
+  - **Upgrade:** **Upgrade** on the billing page opens plans over your current plan.
+
+  ## Dashboard
+
+  - **To-do items:** **To-do items** and the integration cards finish loading after you sign in.
+
+</Update>
+
 <Update label="October 2, 2026" tags={["New releases", "Improvements", "[Audit logs]", "[Issues]"]} rss={{ title: "Read the audit log, and find issues on completed tasks" }}>
 
   ## Audit logs
