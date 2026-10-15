@@ -23,6 +23,8 @@ Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemm
   <img src="/images/platform/monitors-list.png" alt="Monitors list with All monitors, Support, Billing, and Quoting groups, and a card for each monitor" />
 </Frame>
 
+Use **All agents** or select an agent to filter the monitor list.
+
 ## Signal or behavior
 
 You choose the kind when you create the monitor. It does not change later. Pick the kind by what you want back:
@@ -42,10 +44,10 @@ Those issues are separate from failures Lemma groups on its own. Alerting still 
 3. **Name.** This is the label on the card. Lemma does not look for a tool call with that name.
 4. **Scenario**, on a behavior monitor. Describe what the agent should do.
 
-For a wrong cancellation, name the request, the right action, and the mistake:
+For wrong tool use, name the request, the right action, and the mistake:
 
-- Good: “A guest asks to cancel a stay. The agent cancels that reservation, and no other.”
-- Bad: “Handle cancellations.”
+- Good: “A guest asks for their booking details. The agent looks up that booking, and no other.”
+- Bad: “Use reservation tools correctly.”
 
 On a signal monitor, **Which traces count** is optional. Use it to say what to count and what to skip.
 
@@ -63,19 +65,21 @@ You can view the same chart by week or by month. Until the monitor has seen a tr
 
 ## When a trace is wrong
 
-Tell Lemma, then recalibrate. The chart and the trace list update from the correction. **Recalibrate** teaches the monitor for later traces. Lemma also does that every night, and skips a night with no new feedback.
+Tell Lemma when a trace is wrong. The chart and trace list update from the correction.
 
 **Doesn’t fit** and **Mark incorrect** mean this trace should not count. **Add to monitor** means it should, including a trace the monitor has not judged. You can add a short reason. On **Traces** and **Issues**, you can mark several rows at once.
 
-One monitor keeps one correction per trace. **Undo**, or **Restore** on **Feedback**, puts the trace back. A succeeded recalibrate removes the feedback it used. If a recalibrate is already running, Lemma refuses another.
+**Undo**, or **Restore** on **Feedback**, returns the trace to the monitor’s own judgment.
 
-A wording change stays a suggestion until you accept it. Dismiss the suggestion to keep the saved wording. A failed or skipped run leaves that feedback in place.
+Select **Recalibrate** to teach the monitor from that feedback for later traces. Lemma also recalibrates every night.
 
-The count rules and the learning window are in the [monitor contract](/reference/monitor-contract#corrections-and-counts). Use that page when a chart does not match the trace you marked.
+The [correction rules](/reference/monitor-contract#corrections-and-counts), [learning window](/reference/monitor-contract#what-learning-keeps), and [recalibrate rules](/reference/monitor-contract#recalibrate) are in the monitor contract.
 
 ## Groups
 
 **All monitors** lists every monitor in the project. **New group** adds a tab you name, and a monitor can belong to more than one group. **Existing** appears only inside a group, and adds monitors you already have.
+
+Right-click a group to rename it, add monitors, or delete it.
 
 Deleting a group leaves its monitors running. Everyone in the project sees the same groups and the same card order. Card order, creating on an open group tab, and the side rail are in the [monitor contract](/reference/monitor-contract#groups-and-the-board).
 
