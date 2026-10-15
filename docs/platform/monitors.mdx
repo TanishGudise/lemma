@@ -19,8 +19,8 @@ A reservations agent can watch cancellations. When the agent cancels the wrong s
 
 You choose the kind when you create the monitor. It does not change later. Pick the kind by what you want back:
 
-- **Signal**: a daily rate, and no issues. A reservations agent can watch for a guest who asks for a person.
-- **Behavior**: an issue when the agent does it wrong. The same agent can watch cancellations, and Lemma writes an issue for this monitor only.
+- **Signal**: a daily rate, and no issues. “Asked for a person” is a signal.
+- **Behavior**: an issue for this monitor when the run is wrong. “Wrong cancellation” is a behavior.
 - **Template**: one monitor for each starter you pick
 
 Those issues are separate from failures Lemma groups on its own. Alerting still follows the [issue lifecycle](/platform/issues).
@@ -39,7 +39,7 @@ A useful scenario names the request, the right action, and the mistake:
 - Good: “A guest asks to cancel a stay. The agent cancels that reservation, and no other.”
 - Bad: “Handle cancellations.”
 
-On a signal monitor, **Which traces count** is optional. Use it to say what to count and what to skip. **Existing** appears only inside a group, and adds monitors you already have.
+On a signal monitor, **Which traces count** is optional. Use it to say what to count and what to skip.
 
 ## Daily percent and count
 
@@ -55,15 +55,19 @@ You can view the same chart by week or by month. Until the monitor has seen a tr
 
 ## When a trace is wrong
 
-Tell Lemma, then recalibrate. The chart updates from the correction. **Recalibrate** teaches the monitor for later traces, and Lemma also does that every night.
+Tell Lemma, then recalibrate. The chart and the trace list update from the correction. **Recalibrate** teaches the monitor for later traces. Lemma also does that every night, and skips a night with no new feedback.
 
-**Doesn’t fit** and **Mark incorrect** mean this trace should not count. **Add to monitor** means it should, including a trace the monitor has not judged. You can add a short reason. **Undo**, or **Restore** on **Feedback**, puts the trace back.
+**Doesn’t fit** and **Mark incorrect** mean this trace should not count. **Add to monitor** means it should, including a trace the monitor has not judged. You can add a short reason. On **Traces** and **Issues**, you can mark several rows at once.
 
-A wording change stays a suggestion until you accept it. Dismiss the suggestion to keep the saved wording.
+One monitor keeps one correction per trace. **Undo**, or **Restore** on **Feedback**, puts the trace back. A succeeded recalibrate removes the feedback it used. If a recalibrate is already running, Lemma refuses another.
+
+A wording change stays a suggestion until you accept it. Dismiss the suggestion to keep the saved wording. A failed or skipped run leaves that feedback in place.
 
 ## Groups
 
-**All monitors** lists every monitor in the project. **New group** adds a tab you name, and a monitor can belong to more than one group. Deleting a group leaves its monitors running. Everyone in the project sees the same groups and the same card order.
+**All monitors** lists every monitor in the project. **New group** adds a tab you name, and a monitor can belong to more than one group. **Existing** appears only inside a group, and adds monitors you already have.
+
+Deleting a group leaves its monitors running. Everyone in the project sees the same groups and the same card order.
 
 ## From the API
 
