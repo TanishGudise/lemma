@@ -9,7 +9,7 @@ meta:
 
 A **monitor** watches one named agent for one thing you describe. Use one for a daily rate, or for an issue each time that thing goes wrong.
 
-A reservations agent can watch cancellations. When the agent cancels the wrong stay, Lemma writes an issue for that run. Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemma.ai).
+A behavior monitor on a reservations agent writes an issue when a cancellation is wrong. Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemma.ai).
 
 <Frame>
   <img src="/images/platform/monitors-list.png" alt="Monitors list with All monitors, Support, Billing, and Quoting groups, and a card for each monitor" />
@@ -63,15 +63,17 @@ One monitor keeps one correction per trace. **Undo**, or **Restore** on **Feedba
 
 A wording change stays a suggestion until you accept it. Dismiss the suggestion to keep the saved wording. A failed or skipped run leaves that feedback in place.
 
+The count rules and the learning window are in the [monitor contract](/reference/monitor-contract#corrections-and-counts). Use that page when a chart does not match the trace you marked.
+
 ## Groups
 
 **All monitors** lists every monitor in the project. **New group** adds a tab you name, and a monitor can belong to more than one group. **Existing** appears only inside a group, and adds monitors you already have.
 
-Deleting a group leaves its monitors running. Everyone in the project sees the same groups and the same card order.
+Deleting a group leaves its monitors running. Everyone in the project sees the same groups and the same card order. Card order, creating on an open group tab, and the side rail are in the [monitor contract](/reference/monitor-contract#groups-and-the-board).
 
 ## From the API
 
-REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the reads. You create a monitor, change it, record feedback, and recalibrate on REST. Request shapes are in the [API Reference](/api-reference).
+REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the reads. You create a monitor, change it, record feedback, and recalibrate on REST. What those calls change is in the [monitor contract](/reference/monitor-contract#from-the-api). Request shapes are in the [API Reference](/api-reference).
 
 ## Related pages
 

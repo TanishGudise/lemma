@@ -149,6 +149,7 @@
             "expanded": true,
             "pages": [
               "reference/trace-contract",
+              "reference/monitor-contract",
               "reference/analytics-telemetry",
               "reference/analytics-query"
             ]
