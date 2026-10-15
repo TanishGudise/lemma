@@ -34,7 +34,9 @@ Matching evidence can reopen a resolved issue, but never reopens a dismissed one
 
 ## Priority and grouping
 
-Priority comes from recurrence and impact measured across your whole population of issues, things like volume and spikes, not from a threshold you configure on a monitor. Treat it as a triage hint rather than a guarantee.
+Priority comes from recurrence and impact measured across your whole population of issues, things like volume and spikes. It is not a threshold you set. Treat it as a triage hint rather than a guarantee.
+
+A [tool monitor](/platform/monitors) writes its own issues when a trace fits that monitor. Alerting on this page still follows the issue lifecycle.
 
 Grouping aims for one issue per underlying defect, but it isn’t perfect. If two issues look like the same bug, check their supporting traces rather than assuming Lemma missed an obvious merge. Grouping gets revised as more traces arrive.
 
@@ -60,6 +62,9 @@ Connecting Slack or Linear never auto-creates a ticket, and recurrence never cre
 <CardGroup cols={2}>
   <Card title="Concepts" href="/platform/concepts">
     How traces and issues relate.
+  </Card>
+  <Card title="Monitors" href="/platform/monitors">
+    Issues a tool monitor writes when a trace fits.
   </Card>
   <Card title="Traces" href="/platform/traces">
     Open the supporting executions for an issue.
