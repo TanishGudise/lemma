@@ -1,13 +1,13 @@
 ---
 title: "Monitors"
-description: "A continuous tracker for one specific event or behavior on one named agent"
+description: "A continuous tracker for a specific event or behavior in an agent's traces"
 meta:
   contentType: "Conceptual"
   goal: "Choose an event or behavior to track, configure the monitor, and correct a trace that does not fit"
-  audience: "People tracking a specific event or behavior on one named agent"
+  audience: "People tracking a specific event or behavior for an agent"
 ---
 
-Use a **monitor** when you want continuous information about one event or behavior on one agent. It records matching traces as they arrive. See [Concepts](/platform/concepts#monitor) for the product definition.
+Use a **monitor** when you want continuous information about an event or behavior in an agent’s traces. It records matching traces as they arrive. See [Concepts](/platform/concepts#monitor) for the product definition.
 
 The description tells the monitor what to look for. Each match updates its count and percentage. A behavior monitor also writes an issue when the agent gets that behavior wrong.
 
@@ -39,7 +39,7 @@ Those issues are separate from failures Lemma groups on its own. Alerting still 
 
 **New monitor** asks for these, in order:
 
-1. **Agent to watch.** Pick the one agent this monitor judges. You can’t change it later. Lemma does not judge a trace that has no agent name.
+1. **Agent to watch.** Pick an agent for this monitor to judge. You can’t change it later. Lemma does not judge a trace that has no agent name.
 2. **Kind.** Choose **Signal**, **Behavior**, or **Template**.
 3. **Name.** This is the label on the card. Lemma does not look for a tool call with that name.
 4. **Scenario**, on a behavior monitor. Describe what the agent should do.

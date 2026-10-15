@@ -11,7 +11,7 @@ Counts update as traces arrive. Use this page to check which traces count, what 
 
 ## One agent
 
-Each monitor watches one agent. `agent_name` is the agent name on the trace, the same value as `gen_ai.agent.name`.
+Each monitor watches an agent. `agent_name` is the agent name on the trace, the same value as `gen_ai.agent.name`.
 
 You set `agent_name` when you create the monitor. Lemma stores that string as given. You can’t change it later.
 
@@ -63,7 +63,7 @@ A write keeps only live monitor ids. `PUT` replaces the whole board. Lemma keeps
 
 REST and the Lemma Model Context Protocol (MCP) server share the monitor reads. MCP reads are:
 
-- `list_monitors`: every monitor, or one agent when you pass `agent_name`
+- `list_monitors`: every monitor, or an agent when you pass `agent_name`
 - `get_monitor_summary`: fit rate, fit count, traces seen, and the chart
 - `list_monitor_traces`: traces that currently fit
 - `list_monitor_issues`: issues this monitor wrote
