@@ -1,22 +1,22 @@
 ---
 title: "Dashboard vocabulary"
 sidebarTitle: "Concepts"
-description: "Traces, issues, artifacts, and agents in the Lemma dashboard"
+description: "Traces, issues, monitors, artifacts, and agents in the Lemma dashboard"
 meta:
   contentType: "Conceptual"
-  goal: "Define project, agent, trace, issue, and artifact on the dashboard"
+  goal: "Define project, agent, trace, issue, monitor, and artifact on the dashboard"
   audience: "People using the Lemma dashboard"
 ---
 
-Once traces start arriving, four more nouns describe what you see in the dashboard. They build on the software development kit (SDK) vocabulary in [SDK concepts](/tracing/instrumentation/concepts): a trace is still the unit you send, and everything below describes what Lemma does with traces after ingest.
+Once traces start arriving, these nouns describe what you see in the dashboard. They build on the software development kit (SDK) vocabulary in [SDK concepts](/tracing/instrumentation/concepts): a trace is still the unit you send, and everything below describes what Lemma does with traces after ingest.
 
 ## Project
 
-A **project** is the top-level container for traces, issues, artifacts, and settings from your agent or agents. Each project has its own dashboard, API key, and project ID. Use separate projects to isolate environments (dev, staging, prod) or distinct products.
+A **project** is the top-level container for traces, issues, monitors, artifacts, and settings from your agent or agents. Each project has its own dashboard, API key, and project ID. Use separate projects to isolate environments (dev, staging, prod) or distinct products.
 
 ## Agent
 
-An **agent** isn’t something you register. It’s a name that appears on a trace, and Lemma uses that name to scope Artifacts, Analytics scorecards, and issue grouping to the right agent. A trace with no usable agent name still ingests, but nothing agent-scoped has anywhere to attach it.
+An **agent** isn’t something you register. It’s a name that appears on a trace, and Lemma uses that name to scope Artifacts, Analytics scorecards, issue grouping, and [monitors](/platform/monitors) to the right agent. A trace with no usable agent name still ingests, but nothing agent-scoped has anywhere to attach it. A monitor does not judge that trace.
 
 ## Trace
 
@@ -30,6 +30,10 @@ Lemma analyzes a trace after its conversation goes quiet, or immediately if the 
 
 Detection and grouping are probabilistic. Treat an issue as a hypothesis backed by evidence, not a certainty, and open the supporting traces before you call it confirmed. Alerting follows this issue lifecycle; see [Product boundaries](#product-boundaries).
 
+## Monitor
+
+A **monitor** is a check you declare for one project and one named agent. A signal monitor judges whether a trace fits. A tool monitor also writes issues when a trace fits. See [Monitors](/platform/monitors).
+
 ## Artifact
 
 **Artifacts** are agent-scoped. **Provided** context is text (or a supported text file) you supply about that agent. **Generated** artifacts are a versioned understanding document and a decision-flow diagram Lemma builds from traces plus that context. Agent names come from observed traces. Context for one named agent is not evidence about another. See [Artifacts](/platform/artifacts).
@@ -38,7 +42,7 @@ Detection and grouping are probabilistic. Treat an issue as a hypothesis backed 
 
 Lemma evaluates **production usage** from real users. It does not offer offline evaluation. If someone asks about “online eval,” they mean evaluating actual production usage.
 
-Standalone monitors, incidents, and a standalone metrics product are not current surfaces. Failure alerting follows the issue lifecycle via [Slack](/connections/slack) and [webhooks](/connections/webhooks).
+Incidents and a standalone metrics product are not current surfaces. A [monitor](/platform/monitors) is a check you declare for one named agent. Monitors may not appear until they are enabled for your workspace. Failure alerting still follows the issue lifecycle via [Slack](/connections/slack) and [webhooks](/connections/webhooks).
 
 ## Related pages
 
@@ -48,6 +52,9 @@ Standalone monitors, incidents, and a standalone metrics product are not current
   </Card>
   <Card title="Issues" href="/platform/issues">
     Status, priority, and investigating supporting traces.
+  </Card>
+  <Card title="Monitors" href="/platform/monitors">
+    A check you declare for one named agent.
   </Card>
   <Card title="Artifacts" href="/platform/artifacts">
     Agent-scoped context that sharpens detection.
