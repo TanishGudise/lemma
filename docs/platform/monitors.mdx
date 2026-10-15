@@ -1,23 +1,43 @@
 ---
 title: "Monitors"
-description: "A check you declare for one named agent, with a daily fit rate and corrections"
+description: "A check you declare for one named agent, with groups in this browser and a daily fit rate"
 meta:
   contentType: "Conceptual"
-  goal: "Declare a monitor for one agent and correct which traces fit"
+  goal: "Declare a monitor for one agent, group it in this browser, and correct which traces fit"
   audience: "People checking one behavior on one named agent"
 ---
 
 A **monitor** is a check you declare for one project and one named agent. It judges whether that agent’s traces fit what you described. Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemma.ai).
 
+<Frame>
+  <img src="/images/platform/monitors-list.svg" alt="Monitors list with All monitors, Support, Billing, and Quoting groups, and a card for each monitor" />
+</Frame>
+
+## Groups
+
+**All monitors** lists every monitor in the project. **New group** adds a tab you name. A monitor can sit in more than one group, and it always stays in **All monitors**.
+
+Right-click a group to rename it, add monitors, or delete the group. Deleting a group leaves its monitors running. Inside a group, **Add existing** puts monitors you already have into that tab. A monitor you create while that tab is open starts in the group too.
+
+Drag a card to change its order in the open tab.
+
+Groups, which monitors they hold, and that card order are saved in this browser for the project. They come back after you reload. They are not stored on the monitor, so another browser does not see them. If this browser blocks storage, they last for this visit only. On a monitor, the side rail lists its groups, or **No group yet**.
+
 ## Signal versus tool
 
-You choose **signal** or **tool** when you create the monitor. The kind does not change later.
+You choose the kind when you create the monitor. It does not change later.
 
-A **signal** monitor judges whether a trace fits. It does not write issues.
+In the dashboard, **New monitor** asks for the agent, then one of these:
 
-A **tool** monitor judges the trace, and when the trace fits, it writes issues for this monitor only. Those issues are separate from failures Lemma groups on its own. Alerting still follows the [issue lifecycle](/platform/issues).
+- **Signal**: whether a trace fits. It does not write issues.
+- **Behavior**: a tool monitor. You give it a name and how the tool should behave. When a trace fits, it writes issues for this monitor only.
+- **Template**: one monitor for each starter you pick.
 
-A tool monitor is a name plus how the tool should behave. Lemma does not store a tool name, and learning does not search for a call named like the title. Learning searches retained traces for that agent and decides which calls fit. Lemma uses the behavior text while learning and does not return it later.
+**Existing** appears only inside a group.
+
+A tool monitor does not store a tool name. The name field can suggest tools this project has already called, and that text is the monitor’s name. Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit. Lemma uses the behavior text while learning and does not return it later.
+
+Those issues are separate from failures Lemma groups on its own. Alerting still follows the [issue lifecycle](/platform/issues).
 
 You can pass an optional hint at create. Lemma uses that hint only while learning and does not return it.
 
@@ -25,9 +45,13 @@ You can pass an optional hint at create. Lemma uses that hint only while learnin
 
 Each monitor watches one agent. `agent_name` is the agent name on the trace, the same value as `gen_ai.agent.name`. You set it at create. Lemma stores it as given, and later edits cannot change it.
 
-Lemma does not judge a trace that has no agent name. A monitor never judges another agent’s traces. The dashboard lists agent names this project has already sent. See [Traces](/platform/traces) and the [trace contract](/reference/trace-contract).
+Lemma does not judge a trace that has no agent name. A monitor never judges another agent’s traces. The dashboard lists agent names this project has already sent, and the list can filter to one of them. **All agents** shows every monitor. See [Traces](/platform/traces) and the [trace contract](/reference/trace-contract).
 
 ## Daily percent and count
+
+<Frame>
+  <img src="/images/platform/monitors-detail.svg" alt="Rate Binder monitor with a daily percent chart, a Count toggle, and the Quoting group" />
+</Frame>
 
 The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A tool monitor also shows how many of those traces have an occurrence.
 
@@ -43,9 +67,9 @@ A wording change stays a suggestion until you accept it. Dismiss a suggestion to
 
 ## Include and exclude
 
-**Doesn’t fit** records `exclude`. **Add to monitor** records `include`, including a trace the monitor has not judged. You can attach a short reason.
+**Doesn’t fit** and **Mark incorrect** both record `exclude`. **Add to monitor** records `include`, including a trace the monitor has not judged. You can attach a short reason. On the monitor’s **Traces** and **Issues** tables, **Mark incorrect** is the whole first cell, and you can mark several rows at once.
 
-`exclude` drops the trace from the fit count, the chart, and the trace list. `include` puts the trace on those reads. **Undo** returns the trace to the monitor’s own judgment. One monitor keeps one active correction per trace.
+`exclude` drops the trace from the fit count, the chart, and the trace list. `include` puts the trace on those reads. **Undo**, or **Restore** on the **Feedback** tab, returns the trace to the monitor’s own judgment. One monitor keeps one active correction per trace.
 
 ## Learning and feedback
 
@@ -62,7 +86,7 @@ REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share
 - `list_monitor_traces`
 - `list_monitor_issues`
 
-Those reads leave out learned formats and the behavior text from create.
+Those reads leave out learned formats and the behavior text from create. Groups and card order are not on the API.
 
 Create, update, delete, feedback, recalibrate, wording suggestions, and issue dismiss or restore are REST only.
 
