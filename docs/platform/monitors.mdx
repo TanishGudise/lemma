@@ -1,1 +1,90 @@
-PLACEHOLDER
+---
+title: "Monitors"
+description: "A check you declare for one named agent, with a daily fit rate and corrections"
+meta:
+  contentType: "Conceptual"
+  goal: "Declare a monitor for one agent and correct which traces fit"
+  audience: "People checking one behavior on one named agent"
+---
+
+A **monitor** is a check you declare for one project and one named agent. It judges whether that agent’s traces fit what you described. Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemma.ai).
+
+Monitors are feature-gated. If you don’t see **Monitors** in the project sidebar, they aren’t enabled for your workspace. Creating or changing a monitor returns 403 until monitors are enabled for that project. Reads stay available. See [Product boundaries](/platform/concepts#product-boundaries).
+
+## Signal versus tool
+
+You choose **signal** or **tool** when you create the monitor. The kind does not change later.
+
+A **signal** monitor judges whether a trace fits. It does not write issues.
+
+A **tool** monitor judges the trace, and when the trace fits, it writes issues for this monitor only. Those issues are separate from failures Lemma groups on its own. Alerting still follows the [issue lifecycle](/platform/issues).
+
+A tool monitor is a name plus how the tool should behave. Lemma does not store a tool name, and learning does not search for a call named like the title. Learning searches retained traces for that agent and decides which calls fit. Lemma uses the behavior text while learning and does not return it later.
+
+You can pass an optional hint at create. Lemma uses that hint only while learning and does not return it.
+
+## One agent
+
+Each monitor watches one agent. `agent_name` is the agent name on the trace, the same value as `gen_ai.agent.name`. You set it at create. Lemma stores it as given, and later edits cannot change it.
+
+Lemma does not judge a trace that has no agent name. A monitor never judges another agent’s traces. The dashboard lists agent names this project has already sent. See [Traces](/platform/traces) and the [trace contract](/reference/trace-contract).
+
+## Daily percent and count
+
+The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A tool monitor also shows how many of those traces have an occurrence.
+
+On the summary, `rate` is `fit_count / traces_seen`. It is null when `traces_seen` is 0. `fit_count` is the count.
+
+Buckets default to `day`, and you can request `week` or `month`. The window includes `start` and excludes `end`. Reads already apply include and exclude corrections.
+
+## Recalibrate
+
+Lemma learns from your feedback every night. **Recalibrate** starts that pass now. A night with no new feedback skips. If a run is already in progress, Lemma refuses another recalibrate.
+
+A wording change stays a suggestion until you accept it. Dismiss a suggestion to keep the saved wording. Recalibrate does not rescore traces that already have a result.
+
+## Include and exclude
+
+**Doesn’t fit** records `exclude`. **Add to monitor** records `include`, including a trace the monitor has not judged. You can attach a short reason.
+
+`exclude` drops the trace from the fit count, the chart, and the trace list. `include` puts the trace on those reads. **Undo** returns the trace to the monitor’s own judgment. One monitor keeps one active correction per trace.
+
+## Learning and feedback
+
+Learning searches traces Lemma still retains for that agent. Those traces stay on the [Traces](/platform/traces) list for 14 days. After you create a monitor, the chart fills in as those traces are judged.
+
+The **Feedback** tab lists your corrections. The next recalibrate uses corrections recorded after the last succeeded run started, including the reason when you wrote one. A succeeded run removes the feedback it used. A failed or skipped run leaves that feedback in place.
+
+## From the API
+
+REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share these reads:
+
+- `list_monitors`, with an optional `agent_name` (omit it to list every agent in the project)
+- `get_monitor_summary`
+- `list_monitor_traces`
+- `list_monitor_issues`
+
+Those reads leave out learned formats and the behavior text from create.
+
+Create, update, delete, feedback, recalibrate, wording suggestions, and issue dismiss or restore are REST only.
+
+Create sends `kind` (`signal` or `tool`), `agent_name`, and `name`. A tool monitor also sends `expected_behavior`, and a signal monitor must omit it. An optional `seed_hint` is used only while learning and is not returned.
+
+Update can change `name`, `trace_phrasing`, or `issue_phrasing`. It cannot change the agent or the kind. Delete removes the monitor from reads and stops judging. Request shapes are in the [API Reference](/api-reference).
+
+## Related pages
+
+<CardGroup cols={2}>
+  <Card title="Issues" href="/platform/issues">
+    Failures Lemma groups on its own, and how alerting follows them.
+  </Card>
+  <Card title="Traces" href="/platform/traces">
+    The retained executions a monitor can judge.
+  </Card>
+  <Card title="Concepts" href="/platform/concepts">
+    How a project, an agent, and a trace fit together.
+  </Card>
+  <Card title="Lemma MCP server" href="/connections/mcp">
+    Read monitors from a coding agent. Writes stay on REST.
+  </Card>
+</CardGroup>
