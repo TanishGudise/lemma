@@ -1,0 +1,355 @@
+{
+  "theme": "mint",
+  "name": "Lemma",
+  "styling": {
+    "css": "/style.css"
+  },
+  "colors": {
+    "primary": "#755CFE",
+    "light": "#755CFE",
+    "dark": "#1D1956"
+  },
+  "fonts": {
+    "heading": {
+      "family": "Britti Sans",
+      "weight": 500,
+      "format": "woff2",
+      "source": "/fonts/britti-sans-medium.woff2"
+    },
+    "body": {
+      "family": "Britti Sans",
+      "weight": 400,
+      "format": "woff2",
+      "source": "/fonts/britti-sans-regular.woff2"
+    }
+  },
+  "logo": {
+    "light": "/logo-light.svg",
+    "dark": "/logo-dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "navbar": {
+    "links": [
+      {
+        "label": "Talk to us",
+        "href": "https://cal.com/jerryzhang/lemma-demo"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://platform.uselemma.ai"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "mcp",
+      "cursor",
+      {
+        "title": "Open in Claude Code",
+        "description": "Ask questions about this page.",
+        "icon": "/icons/claude.svg",
+        "href": {
+          "base": "claude-cli://open",
+          "query": [
+            {
+              "key": "q",
+              "value": "Help me understand this Lemma documentation page.\n\n$page"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "icon": "/icons/book.svg",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "/icons/rocket.svg",
+            "expanded": true,
+            "pages": [
+              "getting-started/introduction"
+            ]
+          },
+          {
+            "group": "Platform",
+            "icon": "/icons/stack-line.svg",
+            "expanded": true,
+            "pages": [
+              "platform/overview",
+              "platform/concepts",
+              "platform/traces",
+              "platform/issues",
+              "platform/monitors",
+              "platform/inspect",
+              "platform/artifacts",
+              "platform/analytics"
+            ]
+          },
+          {
+            "group": "Connections",
+            "icon": "/icons/plug.svg",
+            "expanded": true,
+            "pages": [
+              "connections/overview",
+              "connections/slack",
+              "connections/linear",
+              "connections/mcp",
+              "connections/webhooks"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Instrumentation",
+        "icon": "/icons/workflow.svg",
+        "groups": [
+          {
+            "group": "Tracing",
+            "expanded": true,
+            "pages": [
+              "tracing/instrumentation/concepts",
+              "tracing/instrumentation/setup",
+              "tracing/instrumentation/instrument-an-agent",
+              "tracing/instrumentation/traces",
+              "tracing/instrumentation/cross-process-turns",
+              "tracing/instrumentation/generations",
+              "tracing/instrumentation/tool-calls",
+              "tracing/instrumentation/spans",
+              "tracing/instrumentation/context"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "expanded": true,
+            "pages": [
+              "integrations/openai-agents",
+              "integrations/vercel-ai",
+              "integrations/langchain",
+              "integrations/langgraph",
+              "integrations/mastra"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "expanded": true,
+            "pages": [
+              "tracing/troubleshooting/debug-mode",
+              "tracing/troubleshooting/common-issues"
+            ]
+          },
+          {
+            "group": "Reference",
+            "expanded": true,
+            "pages": [
+              "reference/trace-contract",
+              "reference/analytics-telemetry",
+              "reference/analytics-query"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "icon": "/icons/article.svg",
+        "groups": [
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/turning-issues-into-fixes",
+              "guides/building-high-quality-traces",
+              "guides/instrumenting-multi-turn-agents",
+              "guides/examples",
+              "guides/query-analytics",
+              {
+                "group": "Migrations",
+                "expanded": false,
+                "pages": [
+                  "guides/migrations/raindrop",
+                  "guides/migrations/langfuse",
+                  "guides/migrations/opentelemetry"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "icon": "/icons/code.svg",
+        "openapi": "https://api.uselemma.ai/openapi.json"
+      },
+      {
+        "tab": "Changelog",
+        "icon": "/icons/sparkles.svg",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": [
+              "changelog",
+              "changelog/typescript",
+              "changelog/python",
+              "changelog/docs"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "redirects": [
+    {
+      "source": "/guides/raindrop-to-lemma",
+      "destination": "/guides/migrations/raindrop"
+    },
+    {
+      "source": "/guides/langfuse-otel-to-lemma",
+      "destination": "/guides/migrations/opentelemetry"
+    },
+    {
+      "source": "/reference/good-vs-bad-traces",
+      "destination": "/guides/building-high-quality-traces"
+    },
+    {
+      "source": "/reference/building-high-quality-traces",
+      "destination": "/guides/building-high-quality-traces"
+    },
+    {
+      "source": "/getting-started/minimum-viable-trace",
+      "destination": "/reference/trace-contract"
+    },
+    {
+      "source": "/getting-started/quickstart",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/getting-started/concepts",
+      "destination": "/tracing/instrumentation/concepts"
+    },
+    {
+      "source": "/getting-started/agent-skill",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/overview",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/instrumentation",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/troubleshooting/common-problems",
+      "destination": "/tracing/troubleshooting/common-issues"
+    },
+    {
+      "source": "/tracing/wrapping-your-agent",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/overview",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/setup",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/trace-root-usage",
+      "destination": "/tracing/instrumentation/traces"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/step-usage",
+      "destination": "/tracing/instrumentation/spans"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/tool-call-usage",
+      "destination": "/tracing/instrumentation/tool-calls"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/run-usage",
+      "destination": "/tracing/instrumentation/traces"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/typescript/setup",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/typescript/run-usage",
+      "destination": "/tracing/instrumentation/traces"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/typescript/step-usage",
+      "destination": "/tracing/instrumentation/spans"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/typescript/tool-call-usage",
+      "destination": "/tracing/instrumentation/tool-calls"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/python/setup",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/python/run-usage",
+      "destination": "/tracing/instrumentation/traces"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/python/step-usage",
+      "destination": "/tracing/instrumentation/spans"
+    },
+    {
+      "source": "/tracing/custom-instrumentation/python/tool-call-usage",
+      "destination": "/tracing/instrumentation/tool-calls"
+    },
+    {
+      "source": "/tracing/manual-instrumentation",
+      "destination": "/tracing/instrumentation/setup"
+    },
+    {
+      "source": "/tracing/patterns/threads",
+      "destination": "/tracing/instrumentation/context"
+    },
+    {
+      "source": "/tracing/patterns/custom-attributes",
+      "destination": "/tracing/instrumentation/context"
+    },
+    {
+      "source": "/recipes/async-agent",
+      "destination": "/tracing/instrumentation/traces"
+    },
+    {
+      "source": "/recipes/streaming-sse",
+      "destination": "/tracing/instrumentation/traces"
+    },
+    {
+      "source": "/recipes/tool-calling-agent",
+      "destination": "/tracing/instrumentation/tool-calls"
+    },
+    {
+      "source": "/recipes/multi-step-agent",
+      "destination": "/tracing/instrumentation/traces"
+    },
+    {
+      "source": "/recipes/context-manager",
+      "destination": "/tracing/instrumentation/context"
+    },
+    {
+      "source": "/recipes/recording-metric-events",
+      "destination": "/connections/webhooks"
+    },
+    {
+      "source": "/mcp/overview",
+      "destination": "/connections/mcp"
+    },
+    {
+      "source": "/mcp/reference",
+      "destination": "/connections/mcp"
+    }
+  ]
+}
