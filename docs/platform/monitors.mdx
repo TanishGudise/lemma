@@ -35,11 +35,13 @@ In the dashboard, **New monitor** asks for the agent, then one of these:
 
 **Existing** appears only inside a group.
 
-A tool monitor does not store a tool name. The name field can suggest tools this project has already called, and that text is the monitor’s name. Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit. Lemma uses the behavior text while learning and does not return it later.
-
 Those issues are separate from failures Lemma groups on its own. Alerting still follows the [issue lifecycle](/platform/issues).
 
-You can pass an optional hint at create. Lemma uses that hint only while learning and does not return it.
+### Create
+
+A tool monitor does not store a tool name. The name field can suggest tools this project has already called, and that text is the monitor’s name. Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit.
+
+How the tool should behave, and an optional hint on a signal monitor, are used only while learning. Later reads do not return that text.
 
 ## One agent
 
@@ -53,11 +55,9 @@ Lemma does not judge a trace that has no agent name. A monitor never judges anot
   <img src="/images/platform/monitors-detail.png" alt="Rate Binder monitor with a daily percent chart, a Count toggle, and the Quoting group" />
 </Frame>
 
-The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A tool monitor also shows how many of those traces have an occurrence.
+The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A tool monitor also shows how many of those traces have an occurrence. Until the monitor has seen a trace, there is no percent yet.
 
-On the summary, `rate` is `fit_count / traces_seen`. It is null when `traces_seen` is 0. `fit_count` is the count.
-
-Buckets default to `day`, and you can request `week` or `month`. The window includes `start` and excludes `end`. Reads already apply include and exclude corrections.
+You can also view the same chart by week or by month. The window includes the start and leaves out the end. Reads already apply include and exclude corrections.
 
 ## Recalibrate
 
@@ -79,20 +79,7 @@ The **Feedback** tab lists your corrections. The next recalibrate uses correctio
 
 ## From the API
 
-REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share these reads:
-
-- `list_monitors`, with an optional `agent_name` (omit it to list every agent in the project)
-- `get_monitor_summary`
-- `list_monitor_traces`
-- `list_monitor_issues`
-
-Those reads leave out learned formats and the behavior text from create. Groups and card order are not on the API.
-
-Create, update, delete, feedback, recalibrate, wording suggestions, and issue dismiss or restore are REST only.
-
-Create sends `kind` (`signal` or `tool`), `agent_name`, and `name`. A tool monitor also sends `expected_behavior`, and a signal monitor must omit it. An optional `seed_hint` is used only while learning and is not returned.
-
-Update can change `name`, `trace_phrasing`, or `issue_phrasing`. It cannot change the agent or the kind. Delete removes the monitor from reads and stops judging. Request shapes are in the [API Reference](/api-reference).
+REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the reads. Creating a monitor, changing it, recording feedback, and recalibrating stay on REST. Groups and card order are not on the API. Request shapes are in the [API Reference](/api-reference).
 
 ## Related pages
 
