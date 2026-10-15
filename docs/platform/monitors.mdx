@@ -1,15 +1,21 @@
 ---
 title: "Monitors"
-description: "A daily check on one agent: a rate, or an issue when a behavior goes wrong"
+description: "A continuous count of one specific thing on one named agent"
 meta:
   contentType: "Conceptual"
-  goal: "Decide whether you want a monitor, write one, and correct a trace that does not fit"
-  audience: "People watching one thing on one named agent"
+  goal: "Choose a specific thing to track, write the monitor, and correct a trace that does not fit"
+  audience: "People tracking one specific thing on one named agent"
 ---
 
-A **monitor** watches one named agent for one thing you describe. Use one for a daily rate, or for an issue each time that thing goes wrong.
+A **monitor** continuously tracks one specific thing on one named agent. It counts traces that fit as they arrive.
 
-A behavior monitor on a reservations agent writes an issue when a cancellation is wrong. Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemma.ai).
+Track a specific thing you want information on:
+
+- How many times a user gets frustrated
+- How many times an agent uses a tool wrong
+- How many times an agent incorrectly cancels a reservation
+
+A behavior monitor also writes an issue when that thing goes wrong. Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemma.ai).
 
 <Frame>
   <img src="/images/platform/monitors-list.png" alt="Monitors list with All monitors, Support, Billing, and Quoting groups, and a card for each monitor" />
@@ -19,8 +25,8 @@ A behavior monitor on a reservations agent writes an issue when a cancellation i
 
 You choose the kind when you create the monitor. It does not change later. Pick the kind by what you want back:
 
-- **Signal**: a daily rate, and no issues. “Asked for a person” is a signal.
-- **Behavior**: an issue for this monitor when the run is wrong. “Wrong cancellation” is a behavior.
+- **Signal**: the count, and no issues. User frustration is a signal.
+- **Behavior**: the count, plus an issue when the run is wrong. A wrong tool call, or a wrong cancellation, is a behavior.
 - **Template**: one monitor for each starter you pick
 
 Those issues are separate from failures Lemma groups on its own. Alerting still follows the [issue lifecycle](/platform/issues).
@@ -34,22 +40,22 @@ Those issues are separate from failures Lemma groups on its own. Alerting still 
 3. **Name.** This is the label on the card. Lemma does not look for a tool call with that name.
 4. **Scenario**, on a behavior monitor. Describe what the agent should do.
 
-A useful scenario names the request, the right action, and the mistake:
+For a wrong cancellation, name the request, the right action, and the mistake:
 
 - Good: “A guest asks to cancel a stay. The agent cancels that reservation, and no other.”
 - Bad: “Handle cancellations.”
 
 On a signal monitor, **Which traces count** is optional. Use it to say what to count and what to skip.
 
-## Daily percent and count
+## Percent and count
 
-Open a monitor to see how many of its traces fit.
+The monitor counts each new trace. The chart draws one point per day.
 
 <Frame>
-  <img src="/images/platform/monitors-detail.png" alt="Rate Binder monitor with a daily percent chart, a Count toggle, and the Quoting group" />
+  <img src="/images/platform/monitors-detail.png" alt="Rate Binder monitor with a percent chart, one point per day, a Count toggle, and the Quoting group" />
 </Frame>
 
-The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A behavior monitor also shows how many of those traces have an occurrence.
+**Percent** is the share of that day’s traces that fit. **Count** is how many traces fit that day. A behavior monitor also shows how many of those traces have an occurrence.
 
 You can view the same chart by week or by month. Until the monitor has seen a trace, there is no percent yet.
 
