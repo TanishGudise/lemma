@@ -23,14 +23,14 @@ Drag a card to change its order in the open tab.
 
 Groups, which monitors they hold, and that card order are saved in this browser for the project. They come back after you reload. They are not stored on the monitor, so another browser does not see them. If this browser blocks storage, they last for this visit only. On a monitor, the side rail lists its groups, or **No group yet**.
 
-## Signal versus tool
+## Signal versus behavior
 
 You choose the kind when you create the monitor. It does not change later.
 
 In the dashboard, **New monitor** asks for the agent, then one of these:
 
 - **Signal**: whether a trace fits. It does not write issues.
-- **Behavior**: a tool monitor. You give it a name and how the tool should behave. When a trace fits, it writes issues for this monitor only.
+- **Behavior**: you give it a name and how the agent should behave. When a trace fits, it writes issues for this monitor only.
 - **Template**: one monitor for each starter you pick.
 
 **Existing** appears only inside a group.
@@ -39,9 +39,9 @@ Those issues are separate from failures Lemma groups on its own. Alerting still 
 
 ### Create
 
-A tool monitor does not store a tool name. The name field can suggest tools this project has already called, and that text is the monitor’s name. Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit.
+The name field can suggest tools this project has already called, and that text is the monitor’s name. A behavior monitor does not store a separate tool name. Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit.
 
-How the tool should behave, and an optional hint on a signal monitor, are used only while learning. Later reads do not return that text.
+The behavior you write, and an optional hint on a signal monitor, are used only while learning. Later reads do not return that text.
 
 ## One agent
 
@@ -55,7 +55,7 @@ Lemma does not judge a trace that has no agent name. A monitor never judges anot
   <img src="/images/platform/monitors-detail.png" alt="Rate Binder monitor with a daily percent chart, a Count toggle, and the Quoting group" />
 </Frame>
 
-The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A tool monitor also shows how many of those traces have an occurrence. Until the monitor has seen a trace, there is no percent yet.
+The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A behavior monitor also shows how many of those traces have an occurrence. Until the monitor has seen a trace, there is no percent yet.
 
 You can also view the same chart by week or by month. The window includes the start and leaves out the end. Reads already apply include and exclude corrections.
 
