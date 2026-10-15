@@ -21,7 +21,7 @@ Right-click a group to rename it, add monitors, or delete the group. Deleting a 
 
 Drag a card to change its order in the open tab.
 
-One board per project stores the groups, which monitors they hold, and the **All monitors** card order. Lemma saves that board through the monitors API. A reload, or another member of the project, sees the same groups, membership, and card order. Deleting a monitor removes it from the groups and from the card order. On a monitor, the side rail lists its groups, or **No group yet**.
+One board per project stores the groups, which monitors they hold, and the **All monitors** card order. The dashboard saves that board for the project. A reload, or another member of the project, sees the same groups, membership, and card order. Deleting a monitor removes it from the groups and from the card order. On a monitor, the side rail lists its groups, or **No group yet**.
 
 ## Signal versus behavior
 
@@ -79,7 +79,7 @@ The **Feedback** tab lists your corrections. The next recalibrate uses correctio
 
 ## From the API
 
-REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the monitor reads. Creating a monitor, changing it, recording feedback, recalibrating, and replacing the project board stay on REST. The board is not an MCP tool. Request shapes are in the [API Reference](/api-reference).
+REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the monitor reads. Creating a monitor, changing it, recording feedback, and recalibrating stay on REST. Request shapes are in the [API Reference](/api-reference).
 
 ## Related pages
 
