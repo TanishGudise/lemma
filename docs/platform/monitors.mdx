@@ -41,13 +41,13 @@ Those issues are separate from failures Lemma groups on its own. Alerting still 
 
 ### Name and behavior
 
-The name field can suggest tools this project has already called, and that text is the monitor’s name. A behavior monitor does not store a separate tool name.
+The name field can suggest tools this project has already called, and that text is the monitor’s name. A behavior monitor does not store a separate tool name. You write how the agent should behave. A signal monitor can take an optional hint.
 
 ### What learning uses
 
 Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit.
 
-Lemma uses the behavior you write, and an optional hint on a signal monitor, only while learning. Later reads do not return that text.
+Lemma uses that behavior text, and the optional signal hint, only while learning. Later reads do not return that text.
 
 ## One agent
 
