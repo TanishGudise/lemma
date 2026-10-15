@@ -15,13 +15,15 @@ A **monitor** is a check you declare for one project and one named agent. It jud
 
 ## Groups
 
-**All monitors** lists every monitor in the project. **New group** adds a tab you name. A monitor can sit in more than one group, and it always stays in **All monitors**.
+**All monitors** lists every monitor in the project. **New group** adds a tab you name. A monitor can belong to more than one group, and it always stays in **All monitors**.
 
 Right-click a group to rename it, add monitors, or delete the group. Deleting a group leaves its monitors running. Inside a group, **Add existing** puts monitors you already have into that tab. A monitor you create while that tab is open starts in the group too.
 
-Drag a card to change its order in the open tab. That includes **All monitors** and any group tab.
+Drag a card to change the order on **All monitors** or on a group tab.
 
-One board per project stores the groups, which monitors they hold, and the card order on every tab. The dashboard saves that board for the project. A reload, or another member of the project, sees the same groups, membership, and order. Deleting a monitor removes it from the groups and from every tab’s order. On a monitor, the side rail lists its groups, or **No group yet**.
+One board per project stores the groups, which monitors they hold, and the card order on every tab. The dashboard saves that board for the project. You and every other member see the same groups, membership, and order after a reload.
+
+Deleting a monitor removes it from the groups and from every tab’s order. On a monitor, the side rail lists its groups, or **No group yet**.
 
 ## Signal versus behavior
 
@@ -31,17 +33,21 @@ In the dashboard, **New monitor** asks for the agent, then one of these:
 
 - **Signal**: whether a trace fits. It does not write issues.
 - **Behavior**: you give it a name and how the agent should behave. When a trace fits, it writes issues for this monitor only.
-- **Template**: one monitor for each starter you pick.
+- **Template**: one monitor for each starter you pick
 
 **Existing** appears only inside a group.
 
 Those issues are separate from failures Lemma groups on its own. Alerting still follows the [issue lifecycle](/platform/issues).
 
-### Create
+### Name and behavior
 
-The name field can suggest tools this project has already called, and that text is the monitor’s name. A behavior monitor does not store a separate tool name. Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit.
+The name field can suggest tools this project has already called, and that text is the monitor’s name. A behavior monitor does not store a separate tool name. You write how the agent should behave. A signal monitor can take an optional hint.
 
-The behavior you write, and an optional hint on a signal monitor, are used only while learning. Later reads do not return that text.
+### What learning uses
+
+Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit.
+
+Lemma uses that behavior text, and the optional signal hint, only while learning. Later reads do not return that text.
 
 ## One agent
 
@@ -57,17 +63,19 @@ Lemma does not judge a trace that has no agent name. A monitor never judges anot
 
 The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A behavior monitor also shows how many of those traces have an occurrence. Until the monitor has seen a trace, there is no percent yet.
 
-You can also view the same chart by week or by month. The window includes the start and leaves out the end. Reads already apply include and exclude corrections.
+You can also view the same chart by week or by month. The window includes the start and leaves out the end. The chart counts your include and exclude corrections.
 
 ## Recalibrate
 
-Lemma learns from your feedback every night. **Recalibrate** starts that pass now. A night with no new feedback skips. If a run is already in progress, Lemma refuses another recalibrate.
+Lemma learns from your feedback every night. **Recalibrate** starts that pass now. Lemma skips a night that has no new feedback. If a run is already in progress, Lemma refuses another recalibrate.
 
 A wording change stays a suggestion until you accept it. Dismiss a suggestion to keep the saved wording. Recalibrate does not rescore traces that already have a result.
 
 ## Include and exclude
 
-**Doesn’t fit** and **Mark incorrect** both record `exclude`. **Add to monitor** records `include`, including a trace the monitor has not judged. You can attach a short reason. On the monitor’s **Traces** and **Issues** tables, **Mark incorrect** is the whole first cell, and you can mark several rows at once.
+**Doesn’t fit** and **Mark incorrect** both record `exclude`. **Add to monitor** records `include`, including a trace the monitor has not judged. You can attach a short reason.
+
+On the monitor’s **Traces** and **Issues** tables, **Mark incorrect** is the whole first cell. You can mark several rows at once.
 
 `exclude` drops the trace from the fit count, the chart, and the trace list. `include` puts the trace on those reads. **Undo**, or **Restore** on the **Feedback** tab, returns the trace to the monitor’s own judgment. One monitor keeps one active correction per trace.
 
@@ -79,7 +87,9 @@ The **Feedback** tab lists your corrections. The next recalibrate uses correctio
 
 ## From the API
 
-REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the monitor reads. Creating a monitor, changing it, recording feedback, and recalibrating stay on REST. Request shapes are in the [API Reference](/api-reference). Groups, membership, and the card order on each tab stay in the dashboard. They are not on REST or MCP yet.
+REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the monitor reads. Creating a monitor, changing it, recording feedback, and recalibrating stay on REST. Request shapes are in the [API Reference](/api-reference).
+
+The dashboard saves groups, membership, and the card order on each tab. REST and MCP do not include that board.
 
 ## Related pages
 
