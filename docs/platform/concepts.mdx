@@ -32,7 +32,9 @@ Detection and grouping are probabilistic. Treat an issue as a hypothesis backed 
 
 ## Monitor
 
-A **monitor** continuously tracks one specific thing on one named agent. A signal monitor counts traces that fit. A behavior monitor does that and writes an issue when the run is wrong.
+A **monitor** is a continuously running tracker attached to one agent. It examines that agent’s traces and records when a specific event or behavior occurs.
+
+The monitor’s description tells it what to look for. A signal monitor records an event. A behavior monitor records a wrong behavior and writes an issue.
 
 Every member sees the same groups and the card order on every tab. See [Monitors](/platform/monitors).
 
@@ -56,7 +58,7 @@ Incidents and a standalone metrics product are not current surfaces. Failure ale
     Status, priority, and investigating supporting traces.
   </Card>
   <Card title="Monitors" href="/platform/monitors">
-    A continuous count of one specific thing on one agent.
+    A continuous tracker for one event or behavior on one agent.
   </Card>
   <Card title="Artifacts" href="/platform/artifacts">
     Agent-scoped context that sharpens detection.
