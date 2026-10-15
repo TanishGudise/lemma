@@ -22,14 +22,14 @@ For software development kit (SDK) vocabulary, see [SDK concepts](/tracing/instr
 
 ## Projects, agents, and scope
 
-You create **projects**. A project holds traces, issues, artifacts, and project settings. Each project has its own dashboard. Use separate projects to isolate environments (dev, staging, prod) or distinct products.
+You create **projects**. A project holds traces, issues, monitors, artifacts, and project settings. Each project has its own dashboard. Use separate projects to isolate environments (dev, staging, prod) or distinct products.
 
-**Agents appear when named traces arrive.** Lemma does not ask you to register an application entity. The agent name on a trace is how Lemma groups Artifacts, Analytics scorecards, and issue scope. Traces without a usable agent name still ingest, but agent-scoped features have nothing to attach to.
+**Agents appear when named traces arrive.** Lemma does not ask you to register an application entity. The agent name on a trace is how Lemma groups Artifacts, Analytics scorecards, issue scope, and monitors. Traces without a usable agent name still ingest, but agent-scoped features have nothing to attach to. A monitor does not judge that trace.
 
 | Scope | What lives there |
 | -- | -- |
 | **Organization** | Slack workspace OAuth, Linear workspace OAuth, organization API keys |
-| **Project** | Alert channel and Issue Briefs, Linear team and project defaults, webhooks, traces, issues, artifacts |
+| **Project** | Alert channel and Issue Briefs, Linear team and project defaults, webhooks, traces, issues, monitors, artifacts |
 | **Person** | Linear identity mapping. Not applicable to API-key or other non-human principals |
 | **Application** | Not a Lemma entity. Agents appear when named traces arrive |
 
@@ -54,6 +54,7 @@ Each surface answers a different question about the same traces:
 | -- | -- |
 | **[Traces](/platform/traces)** | Search, filter, and open individual executions and threads. Distinct from the instrumentation [Agent traces](/tracing/instrumentation/traces) page, which explains how to create traces. |
 | **[Issues](/platform/issues)** | Recurring failure patterns with status and supporting traces. |
+| **[Monitors](/platform/monitors)** | A check for one named agent: which traces fit, and issues a tool monitor writes. Feature-gated. |
 | **[Inspect](/platform/inspect)** | An in-product assistant that reads the page you’re on (a trace, an issue, Analytics, Artifacts, settings) and can share conversations. |
 | **[Artifacts](/platform/artifacts)** | Per-agent context you provide, plus Lemma’s generated understanding document and decision-flow diagram. |
 | **[Analytics](/platform/analytics)** | Project-level volume, latency, errors, tools, models, and cost over a timeframe. Feature-gated; it may not appear in your workspace yet. |
@@ -77,6 +78,9 @@ Start on Analytics or Issues to spot a trend. From there you open the supporting
   </Card>
   <Card title="Issues" href="/platform/issues">
     Recurring failure patterns with status and evidence.
+  </Card>
+  <Card title="Monitors" href="/platform/monitors">
+    A check for one named agent, with a daily fit rate.
   </Card>
   <Card title="Turning issues into fixes" href="/guides/turning-issues-into-fixes">
     Triage, inspect evidence, ship a change, and confirm it does not recur.
