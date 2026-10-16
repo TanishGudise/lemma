@@ -9,11 +9,33 @@ meta:
   audience: "People using the Lemma dashboard and API"
 ---
 
-<Update label="October 15, 2026" tags={["New releases", "[Dashboard]"]} rss={{ title: "Monitor groups are shared for the project" }}>
+<Update label="October 15, 2026" tags={["New releases", "Improvements", "Bug fixes", "[Monitors]", "[Dashboard]", "[Issues]", "[Slack]", "[Billing]"]} rss={{ title: "Monitors track an event or behavior on an agent" }}>
+
+  ## Monitors
+
+  - **Signal and behavior:** [Monitors](/platform/monitors) records matching traces for one agent as they arrive. A signal monitor counts an event. A behavior monitor also writes an issue when that behavior is wrong. You can’t change the agent or the kind later.
+  - **Chart:** **Percent** is the share of traces seen that fit. **All time** includes traces judged today. On a behavior monitor, traces with an occurrence are also a share of traces seen.
+  - **Correct a trace:** **Doesn’t fit** drops a trace from the count. **Add to monitor** includes one, including a trace the monitor has not judged. **Recalibrate** applies that feedback to later traces. Lemma also recalibrates every night.
+  - **MCP:** The [Lemma MCP server](/connections/mcp) can create, update, delete, correct, and recalibrate a monitor. Replacing the project board stays on REST.
 
   ## Dashboard
 
   - **Monitor board:** [Monitors](/platform/monitors) stores one board per project. You and every other member see the same groups and card order after a reload.
+
+  ## Issues
+
+  - **Open the trace:** Clicking an occurrence on an [issue](/platform/issues) opens that trace with the occurrence expanded. When the occurrence cites a span, that span is selected.
+  - **Details:** **Agent**, **Locus**, **Fault**, and **Param** sit in the side rail under **Details**.
+
+  ## Slack
+
+  - **Chart alerts:** An issue alert that includes a chart waits until Slack has the image, then posts. If Slack still rejects the chart, the alert posts once without it.
+  - **Repeat alerts:** You don’t get a second Slack alert for the same issue in that window when fewer of its priority signals fire.
+
+  ## Billing
+
+  - **Trace ingest:** Sending traces returns HTTP 402 until the organization is trialing, active, past due, or on an Enterprise plan. Setup and the rest of the API stay open.
+  - **Enterprise trial:** An Enterprise organization with no Stripe subscription shows **Enterprise trial** on the billing page, and there is no subscription to cancel.
 
 </Update>
 
