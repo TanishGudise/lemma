@@ -1,95 +1,91 @@
 ---
 title: "Monitors"
-description: "A check you declare for one named agent, with a shared project board and a daily fit rate"
+description: "Track an event or behavior on an agent over time."
 meta:
   contentType: "Conceptual"
-  goal: "Declare a monitor for one agent, arrange it on the project board, and correct which traces fit"
-  audience: "People checking one behavior on one named agent"
+  goal: "Choose an event or behavior to track, configure the monitor, and correct a trace that does not fit"
+  audience: "People tracking a specific event or behavior for an agent"
 ---
 
-A **monitor** is a check you declare for one project and one named agent. It judges whether that agent’s traces fit what you described. Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemma.ai).
+Use a **monitor** when you want continuous information about an event or behavior in an agent’s traces. It records matching traces as they arrive. See [Concepts](/platform/concepts#monitor) for the product definition.
+
+The description tells the monitor what to look for. Each match updates its count and percentage. A behavior monitor also writes an issue when the agent gets that behavior wrong.
+
+Use a monitor to track:
+
+- How many times a user gets frustrated
+- How many times an agent uses a tool wrong
+- How many times an agent incorrectly cancels a reservation
+
+Open **Monitors** in a project in the [Lemma dashboard](https://platform.uselemma.ai).
 
 <Frame>
   <img src="/images/platform/monitors-list.png" alt="Monitors list with All monitors, Support, Billing, and Quoting groups, and a card for each monitor" />
 </Frame>
 
-## Groups
+Use **All agents** or select an agent to filter the monitor list.
 
-**All monitors** lists every monitor in the project. **New group** adds a tab you name. A monitor can belong to more than one group, and it always stays in **All monitors**.
+## Signal or behavior
 
-Right-click a group to rename it, add monitors, or delete the group. Deleting a group leaves its monitors running. Inside a group, **Add existing** puts monitors you already have into that tab. A monitor you create while that tab is open starts in the group too.
+You choose the kind when you create the monitor. It does not change later. Pick the kind by what you want back:
 
-Drag a card to change the order on **All monitors** or on a group tab.
-
-One board per project stores the groups, which monitors they hold, and the card order on every tab. The dashboard saves that board for the project. You and every other member see the same groups, membership, and order after a reload.
-
-Deleting a monitor removes it from the groups and from every tab’s order. On a monitor, the side rail lists its groups, or **No group yet**.
-
-## Signal versus behavior
-
-You choose the kind when you create the monitor. It does not change later.
-
-In the dashboard, **New monitor** asks for the agent, then one of these:
-
-- **Signal**: whether a trace fits. It does not write issues.
-- **Behavior**: you give it a name and how the agent should behave. When a trace fits, it writes issues for this monitor only.
+- **Signal**: records when an event occurs, with no issues. User frustration is a signal.
+- **Behavior**: records when a behavior is wrong and writes an issue. A wrong tool call or cancellation is a behavior.
 - **Template**: one monitor for each starter you pick
-
-**Existing** appears only inside a group.
 
 Those issues are separate from failures Lemma groups on its own. Alerting still follows the [issue lifecycle](/platform/issues).
 
-### Name and behavior
+## Create a monitor
 
-The name field can suggest tools this project has already called, and that text is the monitor’s name. A behavior monitor does not store a separate tool name. You write how the agent should behave. A signal monitor can take an optional hint.
+**New monitor** asks for these, in order:
 
-### What learning uses
+1. **Agent to watch.** Pick an agent for this monitor to judge. You can’t change it later. Lemma does not judge a trace that has no agent name.
+2. **Kind.** Choose **Signal**, **Behavior**, or **Template**.
+3. **Name.** This is the label on the card. Lemma does not look for a tool call with that name.
+4. **Scenario**, on a behavior monitor. Describe what the agent should do.
 
-Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit.
+For wrong tool use, name the request, the right action, and the mistake:
 
-Lemma uses that behavior text, and the optional signal hint, only while learning. Later reads do not return that text.
+- Good: “A guest asks for their booking details. The agent looks up that booking, and no other.”
+- Bad: “Use reservation tools correctly.”
 
-## One agent
+On a signal monitor, **Which traces count** is optional. Use it to say what to count and what to skip.
 
-Each monitor watches one agent. `agent_name` is the agent name on the trace, the same value as `gen_ai.agent.name`. You set it at create. Lemma stores it as given, and later edits cannot change it.
+## Percent and count
 
-Lemma does not judge a trace that has no agent name. A monitor never judges another agent’s traces. The dashboard lists agent names this project has already sent, and the list can filter to one of them. **All agents** shows every monitor. See [Traces](/platform/traces) and the [trace contract](/reference/trace-contract).
-
-## Daily percent and count
+Each matching trace updates the count. The chart draws one point per day.
 
 <Frame>
-  <img src="/images/platform/monitors-detail.png" alt="Rate Binder monitor with a daily percent chart, a Count toggle, and the Quoting group" />
+  <img src="/images/platform/monitors-detail.png" alt="Rate Binder monitor with a percent chart, one point per day, a Count toggle, and the Quoting group" />
 </Frame>
 
-The chart is one point per day. **Percent** is the share of that day’s traces that fit. **Count** is how many traces fit. A behavior monitor also shows how many of those traces have an occurrence. Until the monitor has seen a trace, there is no percent yet.
+**Percent** is the share of that day’s traces that fit. **Count** is how many traces fit that day. A behavior monitor also shows how many of those traces have an occurrence.
 
-You can also view the same chart by week or by month. The window includes the start and leaves out the end. The chart counts your include and exclude corrections.
+You can view the same chart by week or by month. Until the monitor has seen a trace, there is no percent yet.
 
-## Recalibrate
+## When a trace is wrong
 
-Lemma learns from your feedback every night. **Recalibrate** starts that pass now. Lemma skips a night that has no new feedback. If a run is already in progress, Lemma refuses another recalibrate.
+Tell Lemma when a trace is wrong. The chart and trace list update from the correction.
 
-A wording change stays a suggestion until you accept it. Dismiss a suggestion to keep the saved wording. Recalibrate does not rescore traces that already have a result.
+**Doesn’t fit** and **Mark incorrect** mean this trace should not count. **Add to monitor** means it should, including a trace the monitor has not judged. You can add a short reason. On **Traces** and **Issues**, you can mark several rows at once.
 
-## Include and exclude
+**Undo**, or **Restore** on **Feedback**, returns the trace to the monitor’s own judgment.
 
-**Doesn’t fit** and **Mark incorrect** both record `exclude`. **Add to monitor** records `include`, including a trace the monitor has not judged. You can attach a short reason.
+Select **Recalibrate** to teach the monitor from that feedback for later traces. Lemma also recalibrates every night.
 
-On the monitor’s **Traces** and **Issues** tables, **Mark incorrect** is the whole first cell. You can mark several rows at once.
+The [correction rules](/reference/monitor-contract#corrections-and-counts), [learning window](/reference/monitor-contract#what-learning-keeps), and [recalibrate rules](/reference/monitor-contract#recalibrate) are in the monitor contract.
 
-`exclude` drops the trace from the fit count, the chart, and the trace list. `include` puts the trace on those reads. **Undo**, or **Restore** on the **Feedback** tab, returns the trace to the monitor’s own judgment. One monitor keeps one active correction per trace.
+## Groups
 
-## Learning and feedback
+**All monitors** lists every monitor in the project. **New group** adds a tab you name, and a monitor can belong to more than one group. **Existing** appears only inside a group, and adds monitors you already have.
 
-Learning searches traces Lemma still retains for that agent. Those traces stay on the [Traces](/platform/traces) list for 14 days. After you create a monitor, the chart fills in as those traces are judged.
+Right-click a group to rename it, add monitors, or delete it.
 
-The **Feedback** tab lists your corrections. The next recalibrate uses corrections recorded after the last succeeded run started, including the reason when you wrote one. A succeeded run removes the feedback it used. A failed or skipped run leaves that feedback in place.
+Deleting a group leaves its monitors running. Everyone in the project sees the same groups and the same card order. Card order, creating on an open group tab, and the side rail are in the [monitor contract](/reference/monitor-contract#groups-and-the-board).
 
 ## From the API
 
-REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the monitor reads. Creating a monitor, changing it, recording feedback, and recalibrating stay on REST. Request shapes are in the [API Reference](/api-reference).
-
-The dashboard saves groups, membership, and the card order on each tab. REST and MCP do not include that board.
+REST and the [Lemma Model Context Protocol (MCP) server](/connections/mcp) share the reads. You create a monitor, change it, record feedback, and recalibrate on REST. What those calls change is in the [monitor contract](/reference/monitor-contract#from-the-api). Request shapes are in the [API Reference](/api-reference).
 
 ## Related pages
 
@@ -98,7 +94,7 @@ The dashboard saves groups, membership, and the card order on each tab. REST and
     Failures Lemma groups on its own, and how alerting follows them.
   </Card>
   <Card title="Traces" href="/platform/traces">
-    The retained executions a monitor can judge.
+    The executions a monitor can judge.
   </Card>
   <Card title="Concepts" href="/platform/concepts">
     How a project, an agent, and a trace fit together.

@@ -1,0 +1,73 @@
+---
+title: "Monitor contract"
+description: "Agent scope, corrections, learning, and the shared board behind a monitor"
+meta:
+  contentType: "Reference"
+  goal: "Apply the rules for which traces a monitor counts and what the API can change"
+  audience: "Engineers and support checking a monitor count or calling the API"
+---
+
+Counts update as traces arrive. Use this page to check which traces count, what learning keeps, and what REST can change. It is the contract behind [Monitors](/platform/monitors). Request shapes are in the [API Reference](/api-reference).
+
+## One agent
+
+Each monitor watches an agent. `agent_name` is the agent name on the trace, the same value as `gen_ai.agent.name`.
+
+You set `agent_name` when you create the monitor. Lemma stores that string as given. You can’t change it later.
+
+Lemma does not judge a trace with no agent name. A monitor never judges another agent’s traces.
+
+## Corrections and counts
+
+`exclude` drops the trace from the fit count, the chart, and the trace list. `include` puts the trace on those reads, including a trace the monitor has not judged.
+
+The chart counts those corrections. `rate` is `fit_count` divided by `traces_seen`, and it is null when `traces_seen` is 0. **Count** is `fit_count`. The dashboard shows `rate` as **Percent**.
+
+The window includes `start` and leaves out `end`. Each bucket reports `occurrence_count`. Omit `granularity` and the series is one bucket per day. Pass `granularity` as `day`, `week`, or `month`.
+
+One monitor keeps one active correction per trace. **Undo**, or **Restore** on **Feedback**, returns the trace to the monitor’s own judgment.
+
+## What learning keeps
+
+Learning does not search for a call named like the title. It searches retained traces for that agent and decides which calls fit.
+
+Those traces stay on the [Traces](/platform/traces) list for 14 days. Lemma uses the behavior text, and an optional `seed_hint`, only while learning. Later reads omit that text, `seed_hint`, the learned format, and its sufficiency.
+
+For a **Behavior** monitor, send `kind` as `tool`. Create requires `expected_behavior`, and Lemma rejects a separate tool name. A signal monitor cannot set `expected_behavior`.
+
+## Recalibrate
+
+The next run uses corrections recorded after `feedback_consumed_through`. That field is the start of the last succeeded run, or null when no run has succeeded.
+
+A succeeded run removes the feedback it used. A failed or skipped run leaves that feedback in place. Recalibrate does not rescore traces that already have a result.
+
+Lemma also runs this every night, and skips a night with no new feedback. If a run is already in progress, Lemma returns 409 and does not start another.
+
+A phrasing change stays a suggestion until you accept it. Accepting it does not rescore past results. Dismiss the suggestion to keep the saved wording.
+
+## Groups and the board
+
+One board per project stores the groups, which monitors they hold, and the card order on every tab. A monitor can belong to more than one group, and it always stays in **All monitors**.
+
+**All monitors** is `monitor_order`. Dragging a card on that tab rewrites that list. Dragging a card on a group tab rewrites that group’s `monitor_ids`.
+
+A monitor you create while a group tab is open starts in that group. **Existing** adds monitors you already have, and that tab appears only inside a group.
+
+Deleting a group does not delete its monitors. Deleting a monitor removes its id from every group and from `monitor_order`. The side rail lists the monitor’s groups, or **No group yet**.
+
+Everyone who can open the project sees the same board. `GET` returns that board. A project with no saved board returns empty groups and an empty order.
+
+A write keeps only live monitor ids. `PUT` replaces the whole board. Lemma keeps a group id that already belongs to this board, and stores any other group under a new id.
+
+## From the API
+
+REST and the Lemma Model Context Protocol (MCP) server share the monitor reads. MCP reads are:
+
+- `list_monitors`: every monitor, or an agent when you pass `agent_name`
+- `get_monitor_summary`: fit rate, fit count, traces seen, and the chart
+- `list_monitor_traces`: traces that currently fit
+- `list_monitor_issues`: issues this monitor wrote
+
+Creating a monitor, changing it, recording feedback, recalibrating, and replacing the board stay on REST. The board routes are not MCP tools.
+
+A patch can change `name`, `trace_phrasing`, or `issue_phrasing`. Lemma rejects any other field, including `agent_name`.
