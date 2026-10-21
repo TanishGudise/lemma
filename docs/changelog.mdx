@@ -9,6 +9,19 @@ meta:
   audience: "People using the Lemma dashboard and API"
 ---
 
+<Update label="October 20, 2026" tags={["New releases", "Improvements", "[Issues]", "[Slack]"]} rss={{ title: "Open an issue conversation, and read Slack deliveries" }}>
+
+  ## Issues
+
+  - **See conversation:** On an [issue](/platform/issues), **See conversation** opens the trace with that occurrence expanded and its first cited span selected. Clicking the row doesn’t open the trace.
+
+  ## Slack
+
+  - **Delivery log:** `GET /projects/{project_id}/slack-deliveries` lists each attempted [Slack](/connections/slack) send, newest first. That covers issue alerts, Issue Briefs, and instrumentation digests, including failed and partial sends. The MCP tool is `list_slack_deliveries`. Each row has no message text. Lemma keeps them for 14 days.
+  - **One delivery:** `GET /projects/{project_id}/slack-deliveries/{delivery_id}` returns every attempted message. The MCP tool is `get_slack_delivery`.
+
+</Update>
+
 <Update label="October 15, 2026" tags={["New releases", "[Dashboard]"]} rss={{ title: "Monitor groups are shared for the project" }}>
 
   ## Dashboard
