@@ -919,8 +919,10 @@ export class TraceContext {
 }
 
 export class TraceHandle extends TraceContext {
-  private sendPromise: Promise<void> = Promise.resolve();
   private ended = false;
+  private sending?: Promise<void>;
+  private sentStartedAt?: Date;
+  private sentEndedAt?: Date;
   protected readonly startedAt: Date;
 
   constructor(
@@ -946,9 +948,12 @@ export class TraceHandle extends TraceContext {
   async end(output: unknown): Promise<void>;
   async end(options: TraceEndOptions): Promise<void>;
   async end(outputOrOptions?: unknown | TraceEndOptions) {
-    // Ending is idempotent: a trace is sent exactly once so a second end()
-    // can't duplicate its spans.
-    if (this.ended) return this.sendPromise;
+    // Ending is idempotent: once a send completes without throwing, end() does
+    // nothing, and a call made during a send waits for that send. If the send
+    // throws, the next end() sends the complete trace again. That is safe: the
+    // trace contract skips span ids Lemma already stored.
+    if (this.ended) return;
+    if (this.sending) return this.sending;
     let endedAtOverride: Date | undefined;
     let startedAtOverride: Date | undefined;
     if (isTraceEndOptions(outputOrOptions)) {
@@ -963,16 +968,25 @@ export class TraceHandle extends TraceContext {
     } else if (arguments.length > 0) {
       this.output(outputOrOptions);
     }
-    this.ended = true;
-    const startedAt = startedAtOverride ?? this.startedAt;
-    const endedAt = endedAtOverride ?? new Date();
-    this.sendPromise = this.sendPromise.then(() =>
-      this.sendFn(this, startedAt, endedAt),
-    );
-    await this.sendPromise;
+    // A retry keeps the first attempt's times unless it passes new ones.
+    const startedAt = startedAtOverride ?? this.sentStartedAt ?? this.startedAt;
+    const endedAt = endedAtOverride ?? this.sentEndedAt ?? new Date();
+    this.sentStartedAt = startedAt;
+    this.sentEndedAt = endedAt;
+    const send = this.sendFn(this, startedAt, endedAt);
+    this.sending = send;
+    try {
+      await send;
+      this.ended = true;
+    } finally {
+      this.sending = undefined;
+    }
   }
 
-  /** Whether this trace has already been delivered via `end()`. */
+  /**
+   * Whether `end()` has finished. A `startTurn()` handle stays false after a
+   * failed send, so `end()` can retry it.
+   */
   get isEnded() {
     return this.ended;
   }
