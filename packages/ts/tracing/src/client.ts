@@ -1062,14 +1062,13 @@ export class Lemma {
 
     let response: Response;
     try {
-      response = await this.fetchImpl(url, {
+      response = await this.lemmaFetch(url, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${this.apiKey}`,
           "Content-Type": "application/json",
         },
         body,
-        signal: this.requestSignal(),
       });
     } catch {
       hints.push("ingest request failed (network error)");
@@ -1411,10 +1410,14 @@ export class Lemma {
     });
   }
 
-  private requestSignal(): AbortSignal | undefined {
-    return this.timeoutMs === null
-      ? undefined
-      : AbortSignal.timeout(this.timeoutMs);
+  /** Every request to Lemma goes through here, so each one gets the deadline. */
+  private lemmaFetch(url: string, init: RequestInit): Promise<Response> {
+    return this.fetchImpl(url, {
+      ...init,
+      ...(this.timeoutMs === null
+        ? {}
+        : { signal: AbortSignal.timeout(this.timeoutMs) }),
+    });
   }
 
   private async fetchIngestStatus(
@@ -1425,9 +1428,8 @@ export class Lemma {
       `?project_id=${encodeURIComponent(this.projectId)}` +
       `&otel_trace_id=${encodeURIComponent(otelTraceId)}`;
     try {
-      const response = await this.fetchImpl(url, {
+      const response = await this.lemmaFetch(url, {
         headers: { Authorization: `Bearer ${this.apiKey}` },
-        signal: this.requestSignal(),
       });
       if (!response.ok) return null;
       const data = (await response.json()) as {
@@ -1522,14 +1524,13 @@ export class Lemma {
     });
     let response: Response;
     try {
-      response = await this.fetchImpl(url, {
+      response = await this.lemmaFetch(url, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${this.apiKey}`,
           "Content-Type": "application/json",
         },
         body,
-        signal: this.requestSignal(),
       });
     } catch (error) {
       lemmaDebug("client", "trace ingest failed", {

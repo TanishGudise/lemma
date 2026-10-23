@@ -1059,7 +1059,15 @@ class Lemma:
         self.timeout = timeout
         self._last_response_headers: dict[str, str] = {}
         self._config_logged = False
-        self.transport = self._wrap_transport(transport or self._default_transport)
+        # The default transport reads self.timeout per request: the one source of the deadline.
+        self.transport = self._wrap_transport(
+            transport
+            or (
+                lambda url, headers, body: self._urllib_transport(
+                    url, headers, body, timeout=self.timeout
+                )
+            )
+        )
         self._log_init_config_once()
 
     def debug_smoke_test(self) -> dict[str, Any]:
@@ -1520,17 +1528,13 @@ class Lemma:
             f"{int(INGEST_STATUS_POLL_TIMEOUT_SECONDS)}s — may be processing lag or downstream issue",
         )
 
-    def _default_transport(
-        self, url: str, headers: dict[str, str], body: bytes
-    ) -> tuple[int, str, dict[str, str]]:
-        return self._urllib_transport(url, headers, body, timeout=self.timeout)
-
     @staticmethod
     def _urllib_transport(
         url: str,
         headers: dict[str, str],
         body: bytes,
-        timeout: float | None = INGEST_TIMEOUT_SECONDS,
+        *,
+        timeout: float | None,
     ) -> tuple[int, str, dict[str, str]]:
         request = urllib.request.Request(
             url,
@@ -1552,7 +1556,8 @@ class Lemma:
     def _urllib_get(
         url: str,
         headers: dict[str, str],
-        timeout: float | None = INGEST_TIMEOUT_SECONDS,
+        *,
+        timeout: float | None,
     ) -> tuple[int, str, dict[str, str]]:
         request = urllib.request.Request(
             url,

@@ -14,46 +14,6 @@ from uselemma_tracing.debug_mode import disable_debug_mode, enable_debug_mode
 PROJECT_ID = "10000000-0000-0000-0000-000000000001"
 
 
-def test_default_urllib_transport_identifies_the_sdk(monkeypatch):
-    requests = []
-
-    class Response:
-        status = 201
-        headers = {}
-
-        def read(self):
-            return b"{}"
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_args):
-            return False
-
-    def urlopen(request, timeout=None):
-        requests.append(request)
-        return Response()
-
-    monkeypatch.setattr("uselemma_tracing.client.urllib.request.urlopen", urlopen)
-
-    lemma = Lemma(
-        api_key="key",
-        project_id=PROJECT_ID,
-        base_url="https://api.example.test",
-    )
-    lemma.trace("support-agent", lambda _trace: "ok")
-    Lemma._urllib_get(
-        "https://api.example.test/traces/ingest-status",
-        {"Authorization": "Bearer key"},
-    )
-
-    assert len(requests) == 2
-    assert all(
-        request.get_header("User-agent").startswith("uselemma-tracing/")
-        for request in requests
-    )
-
-
 class _UrlopenResponse:
     status = 201
     headers = {}
@@ -66,6 +26,34 @@ class _UrlopenResponse:
 
     def __exit__(self, *_args):
         return False
+
+
+def test_default_urllib_transport_identifies_the_sdk(monkeypatch):
+    requests = []
+
+    def urlopen(request, timeout=None):
+        requests.append(request)
+        return _UrlopenResponse()
+
+    monkeypatch.setattr("uselemma_tracing.client.urllib.request.urlopen", urlopen)
+
+    lemma = Lemma(
+        api_key="key",
+        project_id=PROJECT_ID,
+        base_url="https://api.example.test",
+    )
+    lemma.trace("support-agent", lambda _trace: "ok")
+    Lemma._urllib_get(
+        "https://api.example.test/traces/ingest-status",
+        {"Authorization": "Bearer key"},
+        timeout=lemma.timeout,
+    )
+
+    assert len(requests) == 2
+    assert all(
+        request.get_header("User-agent").startswith("uselemma-tracing/")
+        for request in requests
+    )
 
 
 def test_default_transport_bounds_every_request(monkeypatch):
