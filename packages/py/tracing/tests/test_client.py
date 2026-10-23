@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import socket
+import threading
 from datetime import datetime, timezone
 
 import pytest
@@ -28,7 +30,7 @@ def test_default_urllib_transport_identifies_the_sdk(monkeypatch):
         def __exit__(self, *_args):
             return False
 
-    def urlopen(request):
+    def urlopen(request, timeout=None):
         requests.append(request)
         return Response()
 
@@ -50,6 +52,115 @@ def test_default_urllib_transport_identifies_the_sdk(monkeypatch):
         request.get_header("User-agent").startswith("uselemma-tracing/")
         for request in requests
     )
+
+
+class _UrlopenResponse:
+    status = 201
+    headers = {}
+
+    def read(self):
+        return b'{"status": "ready"}'
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
+
+
+def test_default_transport_bounds_every_request(monkeypatch):
+    timeouts = []
+
+    def urlopen(request, timeout=None):
+        timeouts.append(timeout)
+        return _UrlopenResponse()
+
+    monkeypatch.setattr("uselemma_tracing.client.urllib.request.urlopen", urlopen)
+
+    lemma = Lemma(
+        api_key="key",
+        project_id=PROJECT_ID,
+        base_url="https://api.example.test",
+    )
+    lemma.trace("support-agent", lambda _trace: "ok")
+    lemma._fetch_ingest_status("trace-1")
+
+    assert len(timeouts) == 2
+    assert all(timeout is not None and timeout > 0 for timeout in timeouts)
+
+
+def test_timeout_option_reaches_the_default_transport(monkeypatch):
+    timeouts = []
+
+    def urlopen(request, timeout="process default"):
+        timeouts.append(timeout)
+        return _UrlopenResponse()
+
+    monkeypatch.setattr("uselemma_tracing.client.urllib.request.urlopen", urlopen)
+
+    Lemma(api_key="key", project_id=PROJECT_ID, timeout=2.5).trace(
+        "support-agent", lambda _trace: "ok"
+    )
+    Lemma(api_key="key", project_id=PROJECT_ID, timeout=None).trace(
+        "support-agent", lambda _trace: "ok"
+    )
+
+    # None passes no timeout, so urllib keeps socket.getdefaulttimeout().
+    assert timeouts == [2.5, "process default"]
+
+
+@pytest.mark.parametrize(
+    "timeout", [0, -1, float("inf"), float("nan"), 1e10]
+)
+def test_rejects_unusable_timeout(timeout):
+    with pytest.raises(ValueError, match="timeout"):
+        Lemma(api_key="key", project_id=PROJECT_ID, timeout=timeout)
+
+
+def test_trace_returns_when_ingest_never_answers():
+    # The server accepts connections and never responds.
+    server = socket.socket()
+    server.bind(("127.0.0.1", 0))
+    server.listen()
+    held = []
+    accepted = threading.Event()
+
+    def accept():
+        conn, _ = server.accept()
+        held.append(conn)
+        accepted.set()
+
+    threading.Thread(target=accept, daemon=True).start()
+    lemma = Lemma(
+        api_key="key",
+        project_id=PROJECT_ID,
+        base_url=f"http://127.0.0.1:{server.getsockname()[1]}",
+        timeout=0.2,
+    )
+    result = {}
+    worker = threading.Thread(
+        target=lambda: result.update(
+            value=lemma.trace("support-agent", lambda _trace: "ok")
+        ),
+        daemon=True,
+    )
+    try:
+        worker.start()
+        assert accepted.wait(5)
+        worker.join(5)
+
+        assert not worker.is_alive()
+        assert result == {"value": "ok"}
+        # Strict delivery surfaces the timeout so the caller can retry.
+        with pytest.raises(OSError):
+            lemma.ingest(
+                TraceContext(name="support-agent"),
+                started_at=datetime.now(timezone.utc),
+            )
+    finally:
+        for conn in held:
+            conn.close()
+        server.close()
 
 
 def test_custom_transport_receives_sdk_user_agent():
@@ -716,7 +827,7 @@ def test_debug_smoke_test_returns_structured_diagnostics(monkeypatch):
         assert url.endswith("/traces/ingest")
         return 201, "{}", {"cf-ray": "ray-smoke", "server": "cloudflare"}
 
-    def fake_get(url, headers):
+    def fake_get(url, headers, timeout=None):
         calls["status"] += 1
         assert "/traces/ingest-status" in url
         assert "otel_trace_id=" in url
@@ -748,7 +859,7 @@ def test_debug_smoke_test_not_ok_when_ingest_status_fails(monkeypatch):
     def transport(url, headers, body):
         return 201, "{}", {"cf-ray": "ray-smoke"}
 
-    def fake_get(url, headers):
+    def fake_get(url, headers, timeout=None):
         return 503, "nope", {}
 
     monkeypatch.setattr(Lemma, "_urllib_get", staticmethod(fake_get))
@@ -799,7 +910,7 @@ def test_debug_verify_polls_only_when_debug_mode_enabled(monkeypatch, capsys):
     def transport(url, headers, body):
         return 201, "{}"
 
-    def fake_get(url, headers):
+    def fake_get(url, headers, timeout=None):
         calls["status"] += 1
         assert "/traces/ingest-status" in url
         return 200, '{"status": "enqueued"}', {}
@@ -824,7 +935,7 @@ def test_debug_verify_retries_until_timeout(monkeypatch, capsys):
     def transport(url, headers, body):
         return 201, "{}"
 
-    def fake_get(url, headers):
+    def fake_get(url, headers, timeout=None):
         calls["status"] += 1
         return 200, '{"status": "not_found"}', {}
 
@@ -854,7 +965,7 @@ def test_debug_verify_alone_does_not_poll(monkeypatch):
     def transport(url, headers, body):
         return 201, "{}"
 
-    def fake_get(url, headers):
+    def fake_get(url, headers, timeout=None):
         calls["status"] += 1
         return 200, '{"status": "enqueued"}', {}
 
@@ -1107,7 +1218,7 @@ def test_before_send_unchanged_uses_default_transport_user_agent(monkeypatch):
         def __exit__(self, *_args):
             return False
 
-    def urlopen(request):
+    def urlopen(request, timeout=None):
         requests.append(request)
         return Response()
 

@@ -8,6 +8,8 @@ import {
   INGEST_STATUS_PATH,
   INGEST_STATUS_POLL_INTERVAL_MS,
   INGEST_STATUS_POLL_TIMEOUT_MS,
+  INGEST_TIMEOUT_MS,
+  MAX_INGEST_TIMEOUT_MS,
   isSuccessfulIngestStatus,
   parseIngestStatus,
   pickResponseHeaders,
@@ -51,6 +53,11 @@ export type LemmaClientOptions = {
   fetch?: typeof fetch;
   /** Deployed app version stamped on every ingest payload. */
   release?: string;
+  /**
+   * Deadline in milliseconds for each request to Lemma, including uploading
+   * the payload and reading the response. Defaults to 10000; `null` disables it.
+   */
+  timeoutMs?: number | null;
 };
 
 export type DebugSmokeTestResult = {
@@ -984,6 +991,7 @@ export class Lemma {
   private readonly baseUrl: string;
   private readonly fetchImpl: typeof fetch;
   private readonly release?: string;
+  private readonly timeoutMs: number | null;
   private readonly traces = new Map<string, TraceHandle>();
   private configLogged = false;
 
@@ -1004,6 +1012,21 @@ export class Lemma {
     this.release = normalizeRelease(
       options.release ?? process.env.LEMMA_RELEASE,
     );
+    const timeoutMs =
+      options.timeoutMs === undefined ? INGEST_TIMEOUT_MS : options.timeoutMs;
+    if (
+      timeoutMs !== null &&
+      !(
+        Number.isInteger(timeoutMs) &&
+        timeoutMs > 0 &&
+        timeoutMs <= MAX_INGEST_TIMEOUT_MS
+      )
+    ) {
+      throw new Error(
+        `@uselemma/tracing: timeoutMs must be a positive integer up to ${MAX_INGEST_TIMEOUT_MS}, or null`,
+      );
+    }
+    this.timeoutMs = timeoutMs;
     this.logInitConfigOnce();
   }
 
@@ -1046,6 +1069,7 @@ export class Lemma {
           "Content-Type": "application/json",
         },
         body,
+        signal: this.requestSignal(),
       });
     } catch {
       hints.push("ingest request failed (network error)");
@@ -1387,6 +1411,12 @@ export class Lemma {
     });
   }
 
+  private requestSignal(): AbortSignal | undefined {
+    return this.timeoutMs === null
+      ? undefined
+      : AbortSignal.timeout(this.timeoutMs);
+  }
+
   private async fetchIngestStatus(
     otelTraceId: string,
   ): Promise<IngestStatus | null> {
@@ -1397,6 +1427,7 @@ export class Lemma {
     try {
       const response = await this.fetchImpl(url, {
         headers: { Authorization: `Bearer ${this.apiKey}` },
+        signal: this.requestSignal(),
       });
       if (!response.ok) return null;
       const data = (await response.json()) as {
@@ -1498,6 +1529,7 @@ export class Lemma {
           "Content-Type": "application/json",
         },
         body,
+        signal: this.requestSignal(),
       });
     } catch (error) {
       lemmaDebug("client", "trace ingest failed", {
