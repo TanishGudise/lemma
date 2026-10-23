@@ -919,15 +919,13 @@ export class TraceContext {
 }
 
 export class TraceHandle extends TraceContext {
+  private sendPromise: Promise<void> = Promise.resolve();
   private ended = false;
-  private sending?: Promise<void>;
-  private sentStartedAt?: Date;
-  private sentEndedAt?: Date;
   protected readonly startedAt: Date;
 
   constructor(
     options: TraceOptions,
-    private readonly sendFn: (
+    protected readonly sendFn: (
       trace: TraceHandle,
       startedAt: Date,
       endedAt: Date,
@@ -938,24 +936,33 @@ export class TraceHandle extends TraceContext {
     this.startedAt = startedAt ?? coerceDate(options.startedAt) ?? new Date();
     // A trace is delivered only when it is explicitly ended (`end()`). We
     // deliberately do NOT auto-send on construction or on every recorded span:
-    // the ingest API is append-only and treats each submission's spans as new,
-    // so streaming partial snapshots re-sends every prior span and accumulates
-    // duplicates. Recording mutates the in-memory trace only; the single
-    // terminal send from `end()` carries the complete trace.
+    // a partial snapshot overwrites root fields and Lemma processes a trace
+    // once. Recording mutates the in-memory trace only; the send from `end()`
+    // carries the complete trace.
   }
 
   async end(): Promise<void>;
   async end(output: unknown): Promise<void>;
   async end(options: TraceEndOptions): Promise<void>;
   async end(outputOrOptions?: unknown | TraceEndOptions) {
-    // Ending is idempotent: once a send completes without throwing, end() does
-    // nothing, and a call made during a send waits for that send. If the send
-    // throws, the next end() sends the complete trace again. That is safe: the
-    // trace contract skips span ids Lemma already stored.
-    if (this.ended) return;
-    if (this.sending) return this.sending;
-    let endedAtOverride: Date | undefined;
-    let startedAtOverride: Date | undefined;
+    // Ending is idempotent: a trace is sent exactly once so a second end()
+    // can't duplicate its spans.
+    if (this.ended) return this.sendPromise;
+    const times = this.applyEndArguments(outputOrOptions, arguments.length > 0);
+    this.ended = true;
+    const startedAt = times.startedAt ?? this.startedAt;
+    const endedAt = times.endedAt ?? new Date();
+    this.sendPromise = this.sendPromise.then(() =>
+      this.sendFn(this, startedAt, endedAt),
+    );
+    await this.sendPromise;
+  }
+
+  /** Records `end()`'s output and duration; returns the times it passed. */
+  protected applyEndArguments(
+    outputOrOptions: unknown,
+    hasArgument: boolean,
+  ): { startedAt?: Date; endedAt?: Date } {
     if (isTraceEndOptions(outputOrOptions)) {
       if ("output" in outputOrOptions) {
         this.output(outputOrOptions.output);
@@ -963,30 +970,18 @@ export class TraceHandle extends TraceContext {
       if (outputOrOptions.durationMs != null) {
         this.duration(outputOrOptions.durationMs);
       }
-      startedAtOverride = coerceDate(outputOrOptions.startedAt);
-      endedAtOverride = coerceDate(outputOrOptions.endedAt);
-    } else if (arguments.length > 0) {
+      return {
+        startedAt: coerceDate(outputOrOptions.startedAt),
+        endedAt: coerceDate(outputOrOptions.endedAt),
+      };
+    }
+    if (hasArgument) {
       this.output(outputOrOptions);
     }
-    // A retry keeps the first attempt's times unless it passes new ones.
-    const startedAt = startedAtOverride ?? this.sentStartedAt ?? this.startedAt;
-    const endedAt = endedAtOverride ?? this.sentEndedAt ?? new Date();
-    this.sentStartedAt = startedAt;
-    this.sentEndedAt = endedAt;
-    const send = this.sendFn(this, startedAt, endedAt);
-    this.sending = send;
-    try {
-      await send;
-      this.ended = true;
-    } finally {
-      this.sending = undefined;
-    }
+    return {};
   }
 
-  /**
-   * Whether `end()` has finished. A `startTurn()` handle stays false after a
-   * failed send, so `end()` can retry it.
-   */
+  /** Whether this trace has already been delivered via `end()`. */
   get isEnded() {
     return this.ended;
   }
