@@ -987,8 +987,6 @@ class TraceHandle(TraceContext):
         self._lemma = lemma
         self.started_at = _datetime_or_now(started_at)
         self._ended = False
-        self._sending = False
-        self._ended_at: datetime | None = None
 
     def end(
         self,
@@ -997,28 +995,18 @@ class TraceHandle(TraceContext):
         ended_at: datetime | str | None = None,
         duration_ms: int | None = None,
     ) -> None:
-        # Nothing to do once a send has completed, or while one is running.
-        if self._ended or self._sending:
+        if self._ended:
             return
-        self._sending = True
-        try:
-            if output is not None:
-                self.output(output)
-            if duration_ms is not None:
-                self.duration_ms = duration_ms
-            if ended_at is not None or self._ended_at is None:
-                self._ended_at = _datetime_or_now(ended_at)
-            # Ended means a send completed without raising. If ingest raises,
-            # the next end() sends the complete trace again, which is safe:
-            # Lemma skips span ids it already stored.
-            self._lemma.ingest(
-                self,
-                started_at=self.started_at,
-                ended_at=self._ended_at,
-            )
-            self._ended = True
-        finally:
-            self._sending = False
+        self._ended = True
+        if output is not None:
+            self.output(output)
+        if duration_ms is not None:
+            self.duration_ms = duration_ms
+        self._lemma.ingest(
+            self,
+            started_at=self.started_at,
+            ended_at=_datetime_or_now(ended_at),
+        )
 
 
 class Lemma:

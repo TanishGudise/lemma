@@ -208,6 +208,22 @@ def test_turn_end_retries_after_a_failed_send():
     assert calls[1]["trace"]["spans"] == calls[0]["trace"]["spans"]
 
 
+def test_a_plain_trace_handle_still_sends_once():
+    calls = []
+
+    def transport(_url, _headers, body):
+        calls.append(json.loads(body.decode()))
+        return 503, "nope"
+
+    handle = TraceHandle(Lemma(api_key="key", project_id=PROJECT_ID, transport=transport), name="agent")
+
+    with pytest.raises(RuntimeError, match="failed to ingest trace"):
+        handle.end(output="ok")
+    handle.end(output="ok")  # only turns retry; a plain handle sends once, as before
+
+    assert len(calls) == 1
+
+
 def test_turn_end_retries_after_a_network_error():
     calls = []
 

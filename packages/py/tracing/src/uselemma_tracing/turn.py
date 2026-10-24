@@ -307,6 +307,39 @@ class AttachedTurn:
 
 
 class TurnHandle(TraceHandle):
+    _sending = False
+    _ended_at: datetime | None = None
+
+    def end(
+        self,
+        output: Any = None,
+        *,
+        ended_at: datetime | str | None = None,
+        duration_ms: int | None = None,
+    ) -> None:
+        # A turn's end() is strict and can be retried. Nothing to do once a
+        # send has completed, or while one is running. If ingest raises, the
+        # next end() sends the complete trace again, which is safe: Lemma
+        # skips span ids it already stored.
+        if self._ended or self._sending:
+            return
+        self._sending = True
+        try:
+            if output is not None:
+                self.output(output)
+            if duration_ms is not None:
+                self.duration_ms = duration_ms
+            if ended_at is not None or self._ended_at is None:
+                self._ended_at = _datetime_or_now(ended_at)
+            self._lemma.ingest(
+                self,
+                started_at=self.started_at,
+                ended_at=self._ended_at,
+            )
+            self._ended = True
+        finally:
+            self._sending = False
+
     def export(self, parent_span_id: str | None = None) -> dict[str, Any]:
         return _compact(
             {
