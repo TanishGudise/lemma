@@ -325,12 +325,10 @@ class TurnHandle(TraceHandle):
             return
         self._sending = True
         try:
-            if output is not None:
-                self.output(output)
-            if duration_ms is not None:
-                self.duration_ms = duration_ms
-            if ended_at is not None or self._ended_at is None:
-                self._ended_at = _datetime_or_now(ended_at)
+            requested_end = self._apply_end_arguments(output, ended_at, duration_ms)
+            # A retry keeps the first attempt's end time unless it passes a new one.
+            if requested_end is not None or self._ended_at is None:
+                self._ended_at = requested_end or _datetime_or_now(None)
             self._lemma.ingest(
                 self,
                 started_at=self.started_at,
