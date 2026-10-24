@@ -1193,22 +1193,9 @@ def test_before_send_none_drops_without_calling_transport():
 def test_before_send_unchanged_uses_default_transport_user_agent(monkeypatch):
     requests = []
 
-    class Response:
-        status = 201
-        headers = {}
-
-        def read(self):
-            return b"{}"
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_args):
-            return False
-
     def urlopen(request, timeout=None):
         requests.append(request)
-        return Response()
+        return _UrlopenResponse()
 
     monkeypatch.setattr("uselemma_tracing.client.urllib.request.urlopen", urlopen)
 
